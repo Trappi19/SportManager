@@ -1,0 +1,15 @@
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.GeneratedMSBuildEditorConfig.editorconfig
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.AssemblyInfoInputs.cache
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.AssemblyInfo.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.csproj.CoreCompileInputs.cache
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.sourcelink.json
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0\SportManager.exe
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0\SportManager.deps.json
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0\SportManager.runtimeconfig.json
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0\SportManager.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0\SportManager.pdb
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\refint\SportManager.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.pdb
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.genruntimeconfig.cache
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\ref\SportManager.dll

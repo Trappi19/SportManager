@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\team.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\team.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\joueurs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\joueurs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -23,14 +31,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Menu.cs",
-              "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Menu.cs",
-              "RelativeDocumentMoniker": "Scripts\\Menu.cs",
-              "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Menu.cs",
-              "RelativeToolTip": "Scripts\\Menu.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAZAAAAAAAAAA==",
+              "Title": "Team.cs",
+              "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Team.cs",
+              "RelativeDocumentMoniker": "Scripts\\Team.cs",
+              "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Team.cs",
+              "RelativeToolTip": "Scripts\\Team.cs",
+              "ViewState": "AgIAALwBAAAAAAAAAAAiwOUBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T22:10:42.468Z",
+              "WhenOpened": "2026-01-25T01:20:20.163Z",
               "EditorCaption": ""
             },
             {
@@ -55,15 +63,41 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Program.cs",
               "RelativeDocumentMoniker": "Scripts\\Program.cs",
               "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Program.cs",
               "RelativeToolTip": "Scripts\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T22:09:15.832Z",
+              "WhenOpened": "2026-01-25T01:14:54.117Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Joueurs.cs",
+              "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Joueurs.cs",
+              "RelativeDocumentMoniker": "Scripts\\Joueurs.cs",
+              "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Joueurs.cs",
+              "RelativeToolTip": "Scripts\\Joueurs.cs",
+              "ViewState": "AgIAAKwAAAAAAAAAAAAqwOEAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T22:17:19.562Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Menu.cs",
+              "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Menu.cs",
+              "RelativeDocumentMoniker": "Scripts\\Menu.cs",
+              "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Menu.cs",
+              "RelativeToolTip": "Scripts\\Menu.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T22:10:42.468Z",
               "EditorCaption": ""
             }
           ]

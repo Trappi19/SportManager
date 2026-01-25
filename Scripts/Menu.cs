@@ -9,26 +9,26 @@ namespace Menu_Manager
         {
             Console.Clear();
             Console.WriteLine("========================== Bienvenue ! ================================");
-            Console.WriteLine("1. Lancer un match");
+            Console.WriteLine("1. Match");
             Console.WriteLine("2. Voir les joueurs disponibles");
-            Console.WriteLine("3. Voir l'historique des matchs");
-            Console.WriteLine("4. Voir les équipes");
-            Console.WriteLine("5. Voir l'équipe actuel et leurs placements");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("3. Voir les équipes");
+            Console.WriteLine("4. Exit");
 
             Console.Write("Select an option: ");
             var choice = Console.ReadLine();
             switch (choice)
             {
                 case "1":
+                    Match_Manager.MatchSystem.MenuMatchs();
                     break;
                 case "2":
                     Joueurs_Manager.Joueurs.MenuJoueurs();
                     break;
                 case "3":
+                    Team_Manager.Team.MenuTeams();
                     break;
                 case "4":
-                    Team_Manager.Team.MenuTeams();
+                    Environment.Exit(0);
                     break;
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");

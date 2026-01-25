@@ -224,7 +224,7 @@ namespace Team_Manager
                 }
             }
 
-            Console.WriteLine($"\nEquipe créée avec score général : {scoreGeneral}/10");<<
+            Console.WriteLine($"\nEquipe créée avec score général : {scoreGeneral}/10");
             Console.WriteLine("Entrée pour continuer.");
             Console.ReadLine();
         }

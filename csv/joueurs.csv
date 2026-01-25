@@ -1,0 +1,8 @@
+"id_joueur","nom_joueur","score_defense","score_attaque","score_goal","score_general","id_blessure","affectation_joueur"
+1,Bob,5,4,6,6,,Attrapeur
+2,Nicole,6,7,5,6,,Poursuiveur
+3,Zboub,3,7,6,5,,Poursuiveur
+4,Mathéo,1,5,4,3,,Gardien
+5,Baptou,9,5,3,7,,Poursuiveur
+6,Mimi,5,1,10,7,,Batteur
+7,Boubou,5,6,7,6,,Batteur

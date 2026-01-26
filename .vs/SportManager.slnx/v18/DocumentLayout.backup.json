@@ -7,20 +7,20 @@
       "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\team.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\joueurs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\joueurs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\matchsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\matchsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\historicsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\historicsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\joueurs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\joueurs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\historicsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|solutionrelative:scripts\\historicsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3B773952-F1CE-A204-C31A-FBC784F1BC5E}|SportManager.csproj|c:\\mes donn\u00E9es personnelles\\mes documents persos\\cesi\\sportmanager\\scripts\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -58,7 +58,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "HistoricSystem.cs",
               "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\HistoricSystem.cs",
               "RelativeDocumentMoniker": "Scripts\\HistoricSystem.cs",
@@ -70,13 +70,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "MatchSystem.cs",
               "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\MatchSystem.cs",
               "RelativeDocumentMoniker": "Scripts\\MatchSystem.cs",
               "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\MatchSystem.cs",
               "RelativeToolTip": "Scripts\\MatchSystem.cs",
-              "ViewState": "AgIAAJkAAAAAAAAAAAAiwMIAAABPAAAAAAAAAA==",
+              "ViewState": "AgIAAJ0AAAAAAAAAAAAAAMIAAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-25T15:21:22.732Z",
               "EditorCaption": ""
@@ -87,9 +87,9 @@
               "Title": "Team.cs",
               "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Team.cs",
               "RelativeDocumentMoniker": "Scripts\\Team.cs",
-              "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Team.cs*",
-              "RelativeToolTip": "Scripts\\Team.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0CAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Team.cs",
+              "RelativeToolTip": "Scripts\\Team.cs",
+              "ViewState": "AgIAAPsBAAAAAAAAAAAqwC4CAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-25T01:20:20.163Z",
               "EditorCaption": ""
@@ -108,7 +108,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Joueurs.cs",
               "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Joueurs.cs",
               "RelativeDocumentMoniker": "Scripts\\Joueurs.cs",
@@ -121,15 +121,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Menu.cs",
               "DocumentMoniker": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Menu.cs",
               "RelativeDocumentMoniker": "Scripts\\Menu.cs",
               "ToolTip": "C:\\Mes donn\u00E9es personnelles\\Mes documents persos\\CESI\\SportManager\\Scripts\\Menu.cs",
               "RelativeToolTip": "Scripts\\Menu.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAcwBQAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAcwA4AAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-20T22:10:42.468Z"
+              "WhenOpened": "2026-01-20T22:10:42.468Z",
+              "EditorCaption": ""
             }
           ]
         }

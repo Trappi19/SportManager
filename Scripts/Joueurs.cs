@@ -51,30 +51,52 @@ namespace Joueurs_Manager
             Console.WriteLine("=== LISTE DES JOUEURS ===\n");
 
             string sql = @"
-                SELECT id_joueur, nom_joueur, score_defense, score_attaque,
-                       score_goal, score_general, affectation_joueur
-                FROM joueurs
-                ORDER BY nom_joueur;";
+        SELECT j.id_joueur,
+               j.nom_joueur,
+               j.score_defense,
+               j.score_attaque,
+               j.score_goal,
+               j.score_general,
+               j.affectation_joueur,
+               b.type_blessure,
+               b.pénalité
+        FROM joueurs j
+        LEFT JOIN blessures b ON j.id_blessure = b.id_blessure
+        ORDER BY j.nom_joueur;";
 
             using (MySqlCommand cmd = new MySqlCommand(sql, connection))
             using (MySqlDataReader r = cmd.ExecuteReader())
             {
-                Console.WriteLine("ID | Nom | Def | Att | Goal | General | Affectation");
-                Console.WriteLine(new string('-', 70));
+                Console.WriteLine("ID | Nom | Def | Att | Goal | General | Affectation     | Blessure (pénalité)");
+                Console.WriteLine(new string('-', 115));
 
                 while (r.Read())
                 {
+                    string blessure;
+                    if (r["type_blessure"] == DBNull.Value)
+                    {
+                        blessure = "Aucune";
+                    }
+                    else
+                    {
+                        string type = r["type_blessure"].ToString();
+                        int pen = Convert.ToInt32(r["pénalité"]);
+                        blessure = $"{type} ({pen})";
+                    }
+
                     Console.WriteLine(
                         $"{r["id_joueur"],2} | {r["nom_joueur"],-20} | " +
                         $"{r["score_defense"],3} | {r["score_attaque"],3} | " +
                         $"{r["score_goal"],3} | {r["score_general"],3} | " +
-                        $"{r["affectation_joueur"]}");
+                        $"{r["affectation_joueur"],-15} | {blessure}");
                 }
             }
 
             Console.WriteLine("\nEntrée pour revenir au menu.");
             Console.ReadLine();
         }
+
+
 
         private static void CreerJoueur()
         {

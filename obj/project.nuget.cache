@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "15PPUk4PxJA=",
+  "dgSpecHash": "1FGLvt+qJs0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\sevan\\Documents\\Mes Documents\\Cesi\\CSharp\\SportManager\\SportManager.csproj",
+  "projectFilePath": "C:\\Mes données personnelles\\Mes documents persos\\CESI\\SportManager\\SportManager.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sevan\\.nuget\\packages\\bouncycastle.cryptography\\2.6.2\\bouncycastle.cryptography.2.6.2.nupkg.sha512",
     "C:\\Users\\sevan\\.nuget\\packages\\google.protobuf\\3.32.0\\google.protobuf.3.32.0.nupkg.sha512",

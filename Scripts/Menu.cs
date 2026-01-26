@@ -10,8 +10,8 @@ namespace Menu_Manager
             Console.Clear();
             Console.WriteLine("========================== Bienvenue ! ================================");
             Console.WriteLine("1. Match");
-            Console.WriteLine("2. Voir les joueurs disponibles");
-            Console.WriteLine("3. Voir les équipes");
+            Console.WriteLine("2. Joueurs disponibles");
+            Console.WriteLine("3. Equipes");
             Console.WriteLine("4. Exit");
 
             Console.Write("Select an option: ");

@@ -5,11 +5,13 @@ namespace Team_Manager
 {
     internal class Team
     {
+        // Chaîne de connexion à ta BDD
         private static readonly string connectionString =
             "Server=localhost;Database=sportmanager;Uid=root;Pwd=rootroot;";
 
         private static MySqlConnection connection;
 
+        // Menu principal de gestion des équipes
         public static void MenuTeams()
         {
             connection = new MySqlConnection(connectionString);
@@ -34,7 +36,7 @@ namespace Team_Manager
                     case "2": CreerEquipe(); break;
                     case "3": ModifierEquipe(); break;
                     case "4": SupprimerEquipe(); break;
-                    case "5": quitter = true; Menu_Manager.Menu.ShowMenu();  break;
+                    case "5": quitter = true; Menu_Manager.Menu.ShowMenu(); break;
                     default:
                         Console.WriteLine("Choix invalide, entrée pour continuer.");
                         Console.ReadLine();
@@ -45,17 +47,18 @@ namespace Team_Manager
             connection.Close();
         }
 
+        // Affiche toutes les équipes, avec leurs joueurs (Nom + id)
         private static void ListerEquipes()
         {
             Console.Clear();
             Console.WriteLine("=== LISTE DES EQUIPES ===\n");
 
             string sql = @"
-                SELECT id_equipe, nom_equipe, score_general,
-                       id_joueur1, id_joueur2, id_joueur3,
-                       id_joueur4, id_joueur5, id_joueur6, id_joueur7
-                FROM equipes
-                ORDER BY nom_equipe;";
+        SELECT id_equipe, nom_equipe, score_general,
+               id_joueur1, id_joueur2, id_joueur3,
+               id_joueur4, id_joueur5, id_joueur6, id_joueur7
+        FROM equipes
+        ORDER BY nom_equipe;";
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
@@ -63,15 +66,32 @@ namespace Team_Manager
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 using (MySqlDataReader r = cmd.ExecuteReader())
                 {
-                    Console.WriteLine("ID | Nom | Score | J1 J2 J3 J4 J5 J6 J7");
-                    Console.WriteLine(new string('-', 80));
+                    Console.WriteLine("ID | Nom équipe         | Score | Joueurs");
+                    Console.WriteLine(new string('-', 120));
 
                     while (r.Read())
                     {
+                        // Récupère les ids des 7 joueurs
+                        int j1 = r.GetInt32("id_joueur1");
+                        int j2 = r.GetInt32("id_joueur2");
+                        int j3 = r.GetInt32("id_joueur3");
+                        int j4 = r.GetInt32("id_joueur4");
+                        int j5 = r.GetInt32("id_joueur5");
+                        int j6 = r.GetInt32("id_joueur6");
+                        int j7 = r.GetInt32("id_joueur7");
+
+                        // Convertit id -> "Nom (id)"
+                        string sJ1 = GetNomJoueurParId(j1);
+                        string sJ2 = GetNomJoueurParId(j2);
+                        string sJ3 = GetNomJoueurParId(j3);
+                        string sJ4 = GetNomJoueurParId(j4);
+                        string sJ5 = GetNomJoueurParId(j5);
+                        string sJ6 = GetNomJoueurParId(j6);
+                        string sJ7 = GetNomJoueurParId(j7);
+
                         Console.WriteLine(
-                            $"{r["id_equipe"],2} | {r["nom_equipe"],-20} | {r["score_general"],3} | " +
-                            $"{r["id_joueur1"]} {r["id_joueur2"]} {r["id_joueur3"]} " +
-                            $"{r["id_joueur4"]} {r["id_joueur5"]} {r["id_joueur6"]} {r["id_joueur7"]}");
+                            $"{r["id_equipe"],2} | {r["nom_equipe"],-18} | {r["score_general"],3}/10 | " +
+                            $"{sJ1}, {sJ2}, {sJ3}, {sJ4}, {sJ5}, {sJ6}, {sJ7}");
                     }
                 }
             }
@@ -80,6 +100,7 @@ namespace Team_Manager
             Console.ReadLine();
         }
 
+        // Création d'une nouvelle équipe (7 joueurs avec les bons postes)
         private static void CreerEquipe()
         {
             Console.Clear();
@@ -101,6 +122,7 @@ namespace Team_Manager
             int nbGardiens = 0;
             int nbAttrapeurs = 0;
 
+            // On boucle pour remplir les 7 slots
             for (int i = 0; i < 7; i++)
             {
                 bool ok = false;
@@ -114,7 +136,7 @@ namespace Team_Manager
                         continue;
                     }
 
-                    // Vérif doublon
+                    // 1) Vérif doublon dans l'équipe
                     bool dejaPris = false;
                     for (int k = 0; k < i; k++)
                     {
@@ -130,7 +152,7 @@ namespace Team_Manager
                         continue;
                     }
 
-                    // Poste + nom
+                    // 2) Récup poste + nom
                     var info = GetPosteEtNomJoueur(idJoueur);
                     string poste = info.poste;
                     string nomJoueur = info.nom;
@@ -141,6 +163,7 @@ namespace Team_Manager
                         continue;
                     }
 
+                    // 3) Compte combien on a de chaque poste
                     switch (poste)
                     {
                         case "Poursuiveur":
@@ -196,7 +219,7 @@ namespace Team_Manager
                 }
             }
 
-            // Une fois les 7 joueurs validés :
+            // Score général = moyenne des scores généraux des joueurs
             int scoreGeneral = CalculerScoreMoyenEquipe(joueurs);
 
             string sql = @"
@@ -229,8 +252,8 @@ namespace Team_Manager
             Console.ReadLine();
         }
 
-
-        private static void ModifierEquipe()
+        // Modification d'une équipe existante
+        public static void ModifierEquipe()
         {
             Console.Clear();
             Console.WriteLine("=== MODIFICATION D'UNE EQUIPE ===\n");
@@ -245,6 +268,7 @@ namespace Team_Manager
             string nom = "";
             int[] joueurs = new int[7];
 
+            // Récupère l'équipe actuelle
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
@@ -277,11 +301,16 @@ namespace Team_Manager
             string newNom = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(newNom)) nom = newNom;
 
-            Console.WriteLine("\nActuellement joueurs : " +
-                $"{joueurs[0]} {joueurs[1]} {joueurs[2]} {joueurs[3]} {joueurs[4]} {joueurs[5]} {joueurs[6]}");
+            // Affiche la compo actuelle avec Nom (id)
+            Console.WriteLine("\nActuellement joueurs :");
+            for (int i = 0; i < 7; i++)
+            {
+                var info = GetPosteEtNomJoueur(joueurs[i]);
+                string nomJoueur = info.nom ?? "Inconnu";
+                Console.WriteLine($" - Joueur {i + 1} : {nomJoueur} ({joueurs[i]})");
+            }
             Console.WriteLine("\nOn doit garder : 3 poursuiveurs, 2 batteurs, 1 gardien, 1 attrapeur.");
 
-            // On va re-saisir proprement les 7 joueurs, avec vérifs comme dans la création
             int[] nouveauxJoueurs = new int[7];
 
             int nbPoursuiveurs = 0;
@@ -289,19 +318,22 @@ namespace Team_Manager
             int nbGardiens = 0;
             int nbAttrapeurs = 0;
 
+            // Même logique que création, mais on propose de garder le joueur actuel si on laisse vide
             for (int i = 0; i < 7; i++)
             {
                 bool ok = false;
                 while (!ok)
                 {
-                    Console.Write($"ID joueur {i + 1} (ancien {joueurs[i]}) : ");
+                    var infoActuel = GetPosteEtNomJoueur(joueurs[i]);
+                    string nomActuel = infoActuel.nom ?? "Inconnu";
+
+                    Console.Write($"ID joueur {i + 1} (ancien {nomActuel} ({joueurs[i]})) : ");
                     string saisie = Console.ReadLine();
 
                     int idJoueur;
                     if (string.IsNullOrWhiteSpace(saisie))
                     {
-                        // garder l'ancien joueur si on laisse vide
-                        idJoueur = joueurs[i];
+                        idJoueur = joueurs[i]; // garde l'ancien
                     }
                     else if (!int.TryParse(saisie, out idJoueur))
                     {
@@ -309,7 +341,6 @@ namespace Team_Manager
                         continue;
                     }
 
-                    // Vérif doublon
                     bool dejaPris = false;
                     for (int k = 0; k < i; k++)
                     {
@@ -325,7 +356,6 @@ namespace Team_Manager
                         continue;
                     }
 
-                    // Vérif poste
                     var info2 = GetPosteEtNomJoueur(idJoueur);
                     string poste = info2.poste;
                     string nomJoueur2 = info2.nom;
@@ -425,7 +455,7 @@ namespace Team_Manager
             Console.ReadLine();
         }
 
-
+        // Suppression simple d'une équipe
         private static void SupprimerEquipe()
         {
             Console.Clear();
@@ -450,6 +480,7 @@ namespace Team_Manager
             Console.ReadLine();
         }
 
+        // Calcule le score général d'une équipe = moyenne des scores généraux des joueurs
         private static int CalculerScoreMoyenEquipe(int[] joueurs)
         {
             if (joueurs == null || joueurs.Length != 7) return 0;
@@ -470,7 +501,7 @@ namespace Team_Manager
                         object res = cmd.ExecuteScalar();
                         if (res != null && res != DBNull.Value)
                         {
-                            somme += Convert.ToInt32(res);   // score joueur déjà /10
+                            somme += Convert.ToInt32(res);
                             count++;
                         }
                     }
@@ -479,13 +510,12 @@ namespace Team_Manager
 
             if (count == 0) return 0;
 
-            // moyenne simple sur 10
             int moyenne = somme / count;
             return moyenne;
         }
 
-
-        private static (string poste, string nom) GetPosteEtNomJoueur(int idJoueur)
+        // Retourne (poste, nom) d'un joueur à partir de son id
+        public static (string poste, string nom) GetPosteEtNomJoueur(int idJoueur)
         {
             string sql = "SELECT affectation_joueur, nom_joueur FROM joueurs WHERE id_joueur = @id;";
             using (MySqlConnection conn = new MySqlConnection(connectionString))
@@ -507,5 +537,22 @@ namespace Team_Manager
             }
         }
 
+        // Retourne un string "Nom (id)" pour l'affichage
+        private static string GetNomJoueurParId(int idJoueur)
+        {
+            string sql = "SELECT nom_joueur FROM joueurs WHERE id_joueur = @id;";
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", idJoueur);
+                    object res = cmd.ExecuteScalar();
+                    if (res == null || res == DBNull.Value)
+                        return $"Inconnu ({idJoueur})";
+                    return $"{res} ({idJoueur})";
+                }
+            }
+        }
     }
 }

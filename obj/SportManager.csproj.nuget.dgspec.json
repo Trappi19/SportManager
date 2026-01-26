@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sevan\\Documents\\Mes Documents\\Cesi\\CSharp\\SportManager\\SportManager.csproj": {}
+    "C:\\Mes données personnelles\\Mes documents persos\\CESI\\SportManager\\SportManager.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sevan\\Documents\\Mes Documents\\Cesi\\CSharp\\SportManager\\SportManager.csproj": {
+    "C:\\Mes données personnelles\\Mes documents persos\\CESI\\SportManager\\SportManager.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sevan\\Documents\\Mes Documents\\Cesi\\CSharp\\SportManager\\SportManager.csproj",
+        "projectUniqueName": "C:\\Mes données personnelles\\Mes documents persos\\CESI\\SportManager\\SportManager.csproj",
         "projectName": "SportManager",
-        "projectPath": "C:\\Users\\sevan\\Documents\\Mes Documents\\Cesi\\CSharp\\SportManager\\SportManager.csproj",
+        "projectPath": "C:\\Mes données personnelles\\Mes documents persos\\CESI\\SportManager\\SportManager.csproj",
         "packagesPath": "C:\\Users\\sevan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sevan\\Documents\\Mes Documents\\Cesi\\CSharp\\SportManager\\obj\\",
+        "outputPath": "C:\\Mes données personnelles\\Mes documents persos\\CESI\\SportManager\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

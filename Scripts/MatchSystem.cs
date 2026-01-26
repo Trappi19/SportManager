@@ -163,10 +163,10 @@ namespace Match_Manager
             int count = 0;
 
             string sql = @"
-                SELECT j.score_general, j.id_blessure, b.pénalité
-                FROM joueurs j
-                LEFT JOIN blessures b ON j.id_blessure = b.id_blessure
-                WHERE j.id_joueur = @id;";
+        SELECT j.score_general, j.id_blessure, b.pénalité
+        FROM joueurs j
+        LEFT JOIN blessures b ON j.id_blessure = b.id_blessure
+        WHERE j.id_joueur = @id;";
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
@@ -185,15 +185,19 @@ namespace Match_Manager
 
                                 if (!r.IsDBNull(r.GetOrdinal("id_blessure")))
                                 {
-                                    // Ici tu peux parser pénalité genre "-2 score_defense"
-                                    // Pour rester simple on applique juste -2 sur le score général
-                                    // ou tu crées une pénalité numérique dédiée dans la table.
-                                    string pen = r["pénalité"]?.ToString();
-                                    if (!string.IsNullOrEmpty(pen) && pen.Contains("-2"))
-                                        score -= 2;
+                                    // pénalité numérique directement appliquée au score général
+                                    int penalite = 0;
+                                    if (!r.IsDBNull(r.GetOrdinal("pénalité")))
+                                    {
+                                        // la colonne est un INT en BDD
+                                        penalite = Convert.ToInt32(r["pénalité"]);
+                                    }
+                                    score += penalite; // pénalité est négative
                                 }
 
                                 if (score < 0) score = 0;
+                                if (score > 10) score = 10; // on reste sur 0-10
+
                                 somme += score;
                                 count++;
                             }
@@ -203,7 +207,7 @@ namespace Match_Manager
             }
 
             if (count == 0) return 0;
-            return somme / count; // /10, puisque les joueurs sont déjà /10
+            return somme / count; // moyenne sur 10
         }
 
         // Une mi-temps : baseScore + aléatoire

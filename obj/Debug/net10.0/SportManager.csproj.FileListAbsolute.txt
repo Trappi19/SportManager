@@ -35,3 +35,40 @@ C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\ne
 C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
 C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportManager.csproj.AssemblyReference.cache
 C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0\SportMan.2E040279.Up2Date
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\SportManager.exe
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\SportManager.deps.json
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\SportManager.runtimeconfig.json
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\SportManager.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\SportManager.pdb
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\BouncyCastle.Cryptography.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\Google.Protobuf.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\K4os.Compression.LZ4.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\K4os.Compression.LZ4.Streams.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\K4os.Hash.xxHash.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\MySql.Data.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\System.Configuration.ConfigurationManager.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\System.Diagnostics.EventLog.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\System.Security.Permissions.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\System.Windows.Extensions.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\ZstdSharp.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\runtimes\win-x64\native\comerr64.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\runtimes\win-x64\native\gssapi64.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\runtimes\win-x64\native\k5sprt64.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\runtimes\win-x64\native\krb5_64.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\runtimes\win-x64\native\krbcc64.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\bin\Debug\net10.0\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.csproj.AssemblyReference.cache
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.AssemblyInfoInputs.cache
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.AssemblyInfo.cs
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.csproj.CoreCompileInputs.cache
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.sourcelink.json
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportMan.2E040279.Up2Date
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\refint\SportManager.dll
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.pdb
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\SportManager.genruntimeconfig.cache
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0\ref\SportManager.dll

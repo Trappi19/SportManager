@@ -1,0 +1,56 @@
+private static void JouerMatch()
+        {
+            Console.Clear();
+            Console.WriteLine("=== NOUVEAU MATCH ===\n");
+
+            // 1) Choix des deux équipes
+            int equipe1 = ChoisirEquipe("Equipe 1");
+            int equipe2 = ChoisirEquipe("Equipe 2 (différente de la 1)");
+
+            if (equipe1 == 0 || equipe2 == 0 || equipe1 == equipe2)
+            {
+                Console.WriteLine("Sélection d'équipes invalide, retour.");
+                Console.ReadLine();
+                return;
+            }
+
+            // 2) Charger les joueurs des 2 équipes
+            int[] joueursEq1 = ChargerJoueursEquipe(equipe1);
+            int[] joueursEq2 = ChargerJoueursEquipe(equipe2);
+
+            // 3) Appliquer les malus de blessures pour ce match (on calcule un score effectif)
+            int scoreTeam1Base = CalculerScoreEquipeAvecBlessures(joueursEq1);
+            int scoreTeam2Base = CalculerScoreEquipeAvecBlessures(joueursEq2);
+
+            Console.WriteLine($"\nScore moyen (avec blessures) avant match :");
+            Console.WriteLine($"Equipe {equipe1} : {scoreTeam1Base}/10");
+            Console.WriteLine($"Equipe {equipe2} : {scoreTeam2Base}/10\n");
+
+            // 4) Simulation des 2 mi-temps
+            Random rnd = new Random();
+
+            int score1MT1 = SimulerMiTemps(scoreTeam1Base, scoreTeam2Base, rnd);
+            int score2MT1 = SimulerMiTemps(scoreTeam2Base, scoreTeam1Base, rnd);
+
+            Console.WriteLine($"Mi-temps : {score1MT1} - {score2MT1}");
+            Console.WriteLine("Appuie sur entrée pour passer à la 2ème mi-temps.");
+            Console.ReadLine();
+
+            int score1MT2 = SimulerMiTemps(scoreTeam1Base, scoreTeam2Base, rnd);
+            int score2MT2 = SimulerMiTemps(scoreTeam2Base, scoreTeam1Base, rnd);
+
+            int scoreFinal1 = score1MT1 + score1MT2;
+            int scoreFinal2 = score2MT1 + score2MT2;
+
+            Console.WriteLine($"\nScore final : {scoreFinal1} - {scoreFinal2}");
+
+            // 5) Enregistrement du match
+            EnregistrerMatch(equipe1, equipe2, scoreFinal1, scoreFinal2);
+
+            // 6) Gestion des blessures (disparition + nouvelles)
+            GérerBlessuresAprèsMatch(joueursEq1);
+            GérerBlessuresAprèsMatch(joueursEq2);
+
+            Console.WriteLine("\nMatch enregistré et blessures mises à jour. Entrée pour continuer.");
+            Console.ReadLine();
+        }

@@ -1,10 +1,21 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
 
+
 namespace Match_Manager
 {
     internal class MatchSystem
     {
+        // Pour mémoriser qui a marqué quoi et quand
+        private class ButInfo
+        {
+            public int IdJoueur { get; set; }
+            public int IdEquipe { get; set; }
+            public int NumeroMiTemps { get; set; } // 1 ou 2
+        }
+
+        private static readonly Random rndGlobal = new Random();
+
         private static readonly string connectionString =
             "Server=localhost;Database=sportmanager;Uid=root;Pwd=rootroot;";
 
@@ -45,6 +56,8 @@ namespace Match_Manager
             Console.Clear();
             Console.WriteLine("=== NOUVEAU MATCH ===\n");
 
+            var historiqueButs = new System.Collections.Generic.List<ButInfo>();
+
             // 1) Choix des deux équipes
             int equipe1 = ChoisirEquipe("Equipe 1");
             int equipe2 = ChoisirEquipe("Equipe 2 (différente de la 1)");
@@ -71,21 +84,41 @@ namespace Match_Manager
             // 4) Simulation des 2 mi-temps
             Random rnd = new Random();
 
-            int score1MT1 = SimulerMiTemps(scoreTeam1Base, scoreTeam2Base, rnd);
-            int score2MT1 = SimulerMiTemps(scoreTeam2Base, scoreTeam1Base, rnd);
+            // 1ère mi-temps
 
-            Console.WriteLine($"Mi-temps : {score1MT1} - {score2MT1}");
+            // Debug affichage des joueurs
+            //Console.WriteLine("\nDEBUG joueurs équipe 1 : " + string.Join(",", joueursEq1));
+            //Console.WriteLine("DEBUG joueurs équipe 2 : " + string.Join(",", joueursEq2));
+
+            int score1MT1, score2MT1;
+
+            Console.WriteLine("\n--- 1ère mi-temps ---");
+            SaisirEtRepartirButsMiTemps("l'équipe 1", equipe1, joueursEq1, historiqueButs, 1, out score1MT1);
+            SaisirEtRepartirButsMiTemps("l'équipe 2", equipe2, joueursEq2, historiqueButs, 1, out score2MT1);
+
+            Console.WriteLine($"\nMi-temps : {score1MT1} - {score2MT1}");
             Console.WriteLine("Appuie sur entrée pour passer à la 2ème mi-temps.");
             Console.ReadLine();
 
-            int score1MT2 = SimulerMiTemps(scoreTeam1Base, scoreTeam2Base, rnd);
-            int score2MT2 = SimulerMiTemps(scoreTeam2Base, scoreTeam1Base, rnd);
+            // 2ème mi-temps
+            int score1MT2, score2MT2;
+
+            Console.WriteLine("\n--- 2ème mi-temps ---");
+            SaisirEtRepartirButsMiTemps("l'équipe 1", equipe1, joueursEq1, historiqueButs, 2, out score1MT2);
+            SaisirEtRepartirButsMiTemps("l'équipe 2", equipe2, joueursEq2, historiqueButs, 2, out score2MT2);
+
 
             int scoreFinal1 = score1MT1 + score1MT2;
             int scoreFinal2 = score2MT1 + score2MT2;
 
-            Console.WriteLine($"\nScore final : {scoreFinal1} - {scoreFinal2}");
+            Console.WriteLine($"\nScore final : {scoreFinal1} - {scoreFinal2}\n");
 
+            // Récap détaillé des buteurs
+            AfficherRecapButs(historiqueButs, equipe1, equipe2);
+
+
+            Console.WriteLine($"\nScore final : {scoreFinal1} - {scoreFinal2}");
+            
             // 5) Enregistrement du match
             EnregistrerMatch(equipe1, equipe2, scoreFinal1, scoreFinal2);
 
@@ -211,19 +244,19 @@ namespace Match_Manager
         }
 
         // Une mi-temps : baseScore + aléatoire
-        private static int SimulerMiTemps(int scoreEquipe, int scoreAdverse, Random rnd)
-        {
-            // petit bonus/malus selon écart de niveau
-            int diff = scoreEquipe - scoreAdverse; // peut être négatif
-            double facteur = 1.0 + (diff * 0.05);  // 5% par point d'écart
-            if (facteur < 0.5) facteur = 0.5;
+        //private static int SimulerMiTemps(int scoreEquipe, int scoreAdverse, Random rnd)
+        //{
+        //    // petit bonus/malus selon écart de niveau
+        //    int diff = scoreEquipe - scoreAdverse; // peut être négatif
+        //    double facteur = 1.0 + (diff * 0.05);  // 5% par point d'écart
+        //    if (facteur < 0.5) facteur = 0.5;
 
-            int butsDeBase = rnd.Next(0, 4); // 0 à 3 buts
-            int buts = (int)(butsDeBase * facteur);
+        //    int butsDeBase = rnd.Next(0, 4); // 0 à 3 buts
+        //    int buts = (int)(butsDeBase * facteur);
 
-            if (buts < 0) buts = 0;
-            return buts;
-        }
+        //    if (buts < 0) buts = 0;
+        //    return buts;
+        //}
 
         private static void EnregistrerMatch(int idEquipe1, int idEquipe2, int score1, int score2)
         {
@@ -385,6 +418,185 @@ namespace Match_Manager
 
                 int index = rnd.Next(0, liste.Count);
                 return liste[index];
+            }
+        }
+        // Retourne la liste des id_joueur de l'équipe qui sont des Poursuiveur
+        // Retourne la liste des id_joueur de l'équipe qui sont des Poursuiveur
+        private static int[] GetPoursuiveursEquipe(int[] joueurs)
+        {
+            var liste = new System.Collections.Generic.List<int>();
+
+            string sql = "SELECT affectation_joueur FROM joueurs WHERE id_joueur = @id;";
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                foreach (int id in joueurs)
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@id", id);
+                        object res = cmd.ExecuteScalar();
+                        if (res != null && res != DBNull.Value)
+                        {
+                            // ICI : on nettoie la valeur et on compare sans tenir compte de la casse
+                            string affect = res.ToString().Trim();
+                            if (string.Equals(affect, "Poursuiveur", StringComparison.OrdinalIgnoreCase))
+                            {
+                                liste.Add(id);
+                                //Debug Poursuiveur
+                                //Console.WriteLine($"DEBUG: joueur {id} est Poursuiveur (valeur='{affect}')");
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Retourne la collonne des poursuiveurs
+            //Console.WriteLine($"DEBUG: {liste.Count} poursuiveur(s) trouvés pour cette équipe.");
+            return liste.ToArray();
+        }
+
+
+
+        // Demande combien de buts a mis l'équipe dans cette mi-temps,
+        // puis répartit ces buts entre ses poursuiveurs et affiche le détail.
+        // Saisie du nombre de buts de l'équipe pour la mi-temps,
+        // répartition aléatoire entre les poursuiveurs,
+        // stockage dans l'historique + retour du total marqué.
+        private static void SaisirEtRepartirButsMiTemps(
+            string labelEquipe,
+            int idEquipe,
+            int[] joueursEquipe,
+            System.Collections.Generic.List<ButInfo> historique,
+            int numeroMiTemps,
+            out int butsEquipe)
+        {
+            Console.Write($"Nombre de buts de {labelEquipe} pendant cette mi-temps : ");
+            if (!int.TryParse(Console.ReadLine(), out butsEquipe) || butsEquipe < 0)
+            {
+                Console.WriteLine("Entrée invalide, score mis à 0.");
+                butsEquipe = 0;
+            }
+
+            // Récup les poursuiveurs de cette équipe
+            int[] poursuiveurs = GetPoursuiveursEquipe(joueursEquipe);
+            if (poursuiveurs.Length == 0 || butsEquipe == 0)
+            {   
+                Console.WriteLine($"Aucun but à attribuer pour {labelEquipe}.");
+                return;
+            }
+
+            int index = rndGlobal.Next(0, poursuiveurs.Length);
+
+            // On attribue chaque but à un poursuiveur aléatoire
+            var butsParJoueur = new System.Collections.Generic.Dictionary<int, int>();
+            foreach (int idJ in poursuiveurs)
+                butsParJoueur[idJ] = 0;
+
+            for (int i = 0; i < butsEquipe; i++)
+            {
+                index = rndGlobal.Next(0, poursuiveurs.Length);
+                int idJ = poursuiveurs[index];
+
+                butsParJoueur[idJ]++;
+
+                // On ajoute une entrée dans l'historique pour ce but
+                historique.Add(new ButInfo
+                {
+                    IdJoueur = idJ,
+                    IdEquipe = idEquipe,
+                    NumeroMiTemps = numeroMiTemps
+                });
+            }
+
+            // Petit récap pour cette mi-temps
+            Console.WriteLine($"\nRécap des buteurs de {labelEquipe} " +
+                              (numeroMiTemps == 1 ? "en 1ère mi-temps :" : "en 2ème mi-temps :"));
+            foreach (var kvp in butsParJoueur)
+            {
+                if (kvp.Value > 0)
+                {
+                    string nom = GetNomJoueurParId(kvp.Key);
+                    Console.WriteLine($" - {nom} : {kvp.Value} but(s)");
+                }
+            }
+
+            Console.WriteLine();
+        }
+
+        // Retourne "NomDuJoueur (id)" à partir d'un id_joueur
+        private static string GetNomJoueurParId(int idJoueur)
+        {
+            string sql = "SELECT nom_joueur FROM joueurs WHERE id_joueur = @id;";
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", idJoueur);
+                    object res = cmd.ExecuteScalar();
+
+                    if (res == null || res == DBNull.Value)
+                        return $"Joueur inconnu ({idJoueur})";
+
+                    return $"{res} ({idJoueur})";
+                }
+            }
+        }
+        // Récap général du match : pour chaque équipe, quels joueurs ont marqué, et à quelle mi-temps
+        private static void AfficherRecapButs(
+            System.Collections.Generic.List<ButInfo> historique,
+            int idEquipe1,
+            int idEquipe2)
+        {
+            Console.WriteLine("=== RÉCAPITULATIF DES BUTS ===\n");
+
+            AfficherRecapEquipe(historique, idEquipe1, "Equipe 1");
+            Console.WriteLine();
+            AfficherRecapEquipe(historique, idEquipe2, "Equipe 2");
+            Console.WriteLine();
+        }
+
+        // Récap pour une seule équipe
+        private static void AfficherRecapEquipe(
+            System.Collections.Generic.List<ButInfo> historique,
+            int idEquipe,
+            string labelEquipe)
+        {
+            // on regroupe par joueur + mi-temps
+            var map = new System.Collections.Generic.Dictionary<(int idJoueur, int mt), int>();
+
+            foreach (var but in historique)
+            {
+                if (but.IdEquipe != idEquipe) continue;
+
+                var key = (but.IdJoueur, but.NumeroMiTemps);
+                if (!map.ContainsKey(key))
+                    map[key] = 0;
+                map[key]++;
+            }
+
+            Console.WriteLine($"--- {labelEquipe} (id {idEquipe}) ---");
+
+            if (map.Count == 0)
+            {
+                Console.WriteLine("Aucun but marqué.");
+                return;
+            }
+
+            foreach (var kvp in map)
+            {
+                int idJoueur = kvp.Key.idJoueur;
+                int miTemps = kvp.Key.mt;
+                int nbButs = kvp.Value;
+
+                string nom = GetNomJoueurParId(idJoueur);
+                string texteMT = miTemps == 1 ? "1ère mi-temps" : "2ème mi-temps";
+
+                Console.WriteLine($" - {nom} : {nbButs} but(s) en {texteMT}");
             }
         }
     }

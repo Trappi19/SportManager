@@ -372,7 +372,7 @@ namespace Match_Manager
 
                     // 2) nouvelle blessure avec une proba (ex : 20%)
                     int chance = rnd.Next(0, 100);
-                    if (chance < 20) // 20% de chance
+                    if (chance < 10) // 10% de chance
                     {
                         var blessure = TirerBlessureAleatoire(conn, rnd);
                         int nouvelleBlessureId = blessure.idBlessure;

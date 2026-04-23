@@ -1,0 +1,85 @@
+<Window x:Class="SportManager.EditPlayerDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Modifier un Joueur" Height="470" Width="420"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}"
+        ResizeMode="NoResize">
+
+    <Grid Margin="28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Modifier un joueur"
+                   FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,0,0,22"/>
+
+        <StackPanel Grid.Row="1">
+
+            <!-- Nom -->
+            <TextBlock Text="NOM DU JOUEUR" Style="{StaticResource FormLabel}"/>
+            <TextBox x:Name="TbNom" Style="{StaticResource ModernTextBox}" Margin="0,0,0,16"/>
+
+            <!-- Poste -->
+            <TextBlock Text="POSTE" Style="{StaticResource FormLabel}"/>
+            <ComboBox x:Name="CbPoste" Style="{StaticResource ModernComboBox}" Margin="0,0,0,16">
+                <ComboBoxItem Content="Poursuiveur"/>
+                <ComboBoxItem Content="Batteur"/>
+                <ComboBoxItem Content="Gardien"/>
+                <ComboBoxItem Content="Attrapeur"/>
+            </ComboBox>
+
+            <!-- Défense -->
+            <TextBlock Text="SCORE DÉFENSE" Style="{StaticResource FormLabel}"/>
+            <DockPanel Margin="0,0,0,12">
+                <TextBlock x:Name="LblDef" Text="0" DockPanel.Dock="Right" Width="30"
+                           Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
+                           VerticalAlignment="Center" TextAlignment="Right"/>
+                <Slider x:Name="SlDef" Style="{StaticResource ModernSlider}"
+                        ValueChanged="Score_Changed"/>
+            </DockPanel>
+
+            <!-- Attaque -->
+            <TextBlock Text="SCORE ATTAQUE" Style="{StaticResource FormLabel}"/>
+            <DockPanel Margin="0,0,0,12">
+                <TextBlock x:Name="LblAtt" Text="0" DockPanel.Dock="Right" Width="30"
+                           Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
+                           VerticalAlignment="Center" TextAlignment="Right"/>
+                <Slider x:Name="SlAtt" Style="{StaticResource ModernSlider}"
+                        ValueChanged="Score_Changed"/>
+            </DockPanel>
+
+            <!-- Goal -->
+            <TextBlock Text="SCORE GOAL" Style="{StaticResource FormLabel}"/>
+            <DockPanel Margin="0,0,0,16">
+                <TextBlock x:Name="LblGoal" Text="0" DockPanel.Dock="Right" Width="30"
+                           Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
+                           VerticalAlignment="Center" TextAlignment="Right"/>
+                <Slider x:Name="SlGoal" Style="{StaticResource ModernSlider}"
+                        ValueChanged="Score_Changed"/>
+            </DockPanel>
+
+            <!-- Score général -->
+            <Border Background="{StaticResource CardBrush}" CornerRadius="6" Padding="12,8">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Score général calculé : "
+                               Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                    <TextBlock x:Name="LblGen" Text="0 / 10"
+                               Foreground="{StaticResource AccentBrush}"
+                               FontWeight="Bold" FontSize="13"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- Boutons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"
+                    Margin="0,20,0,0">
+            <Button Content="Annuler" Style="{StaticResource BtnSecondary}"
+                    Margin="0,0,10,0" Click="Annuler_Click"/>
+            <Button Content="Enregistrer" Style="{StaticResource BtnPrimary}"
+                    Click="Enregistrer_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

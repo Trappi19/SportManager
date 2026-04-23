@@ -1,17 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>SportManager</RootNamespace>
+    <AssemblyName>SportManager</AssemblyName>
   </PropertyGroup>
 
+  <!-- Exclure le code console et les fichiers générés du sous-projet WPF -->
   <ItemGroup>
-    <None Include="Scripts\Team.cs" />
+    <Compile Remove="Scripts\**\*.cs" />
+    <None    Include="Scripts\**\*.cs" />
+    <!-- Exclure les obj/ et bin/ du sous-projet pour éviter les doublons -->
+    <Compile Remove="SportManager\obj\**" />
+    <Compile Remove="SportManager\bin\**" />
+    <Page    Remove="SportManager\obj\**" />
+    <Page    Remove="SportManager\bin\**" />
+    <ApplicationDefinition Remove="SportManager\obj\**" />
+    <!-- App.xaml doit être ApplicationDefinition (point d'entrée WPF) -->
+    <Page Remove="SportManager\App.xaml" />
+    <ApplicationDefinition Include="SportManager\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
   </ItemGroup>
 
-  <ItemGroup>
+<ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.6.0" />
   </ItemGroup>
 

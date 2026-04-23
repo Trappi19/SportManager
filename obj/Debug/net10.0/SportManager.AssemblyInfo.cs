@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SportManager")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+66d07d87ad51e75966c0d858abf0aa0a3e9b88c9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ddc9e9b30d661400abfdbd9fb61f7fe11e2aef77")]
 [assembly: System.Reflection.AssemblyProductAttribute("SportManager")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SportManager")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

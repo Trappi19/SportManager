@@ -1,0 +1,219 @@
+<Window x:Class="SportManager.MatchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Matchs — Simulation" Height="740" Width="1050"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <Border Background="#0E0826"
+                BorderBrush="{StaticResource SeparatorBrush}" BorderThickness="0,0,0,1">
+            <TextBlock Text="Matchs — Simulation"
+                       FontSize="20" FontWeight="Bold" Foreground="White"
+                       VerticalAlignment="Center" Margin="20,0"/>
+        </Border>
+
+        <!-- CONTENU : TabControl Simulation / Historique -->
+        <TabControl Grid.Row="1" Background="Transparent"
+                    BorderBrush="{StaticResource SeparatorBrush}"
+                    Foreground="{StaticResource TextBrush}">
+
+            <!-- ══════════════ ONGLET SIMULATION ══════════════ -->
+            <TabItem Header="  Simuler un Match  " Foreground="{StaticResource TextBrush}"
+                     Background="{StaticResource CardBrush}">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Sélection équipes -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Équipe 1 -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="ÉQUIPE 1" Style="{StaticResource FormLabel}"/>
+                            <ComboBox x:Name="CbEq1" Style="{StaticResource ModernComboBox}"
+                                      DisplayMemberPath="Nom"
+                                      SelectionChanged="Equipe_SelectionChanged"/>
+                            <Border x:Name="PanelEq1" Background="{StaticResource CardBrush}"
+                                    CornerRadius="6" Margin="0,10,0,0" Padding="12"
+                                    Visibility="Collapsed">
+                                <StackPanel>
+                                    <TextBlock x:Name="TbEq1Score"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               FontWeight="Bold" FontSize="13"
+                                               Margin="0,0,0,6"/>
+                                    <DataGrid x:Name="GridEq1" MaxHeight="140"
+                                              Background="Transparent"
+                                              RowBackground="Transparent"
+                                              AlternatingRowBackground="#1A2332">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Nom"    Binding="{Binding Nom}"       Width="*"/>
+                                            <DataGridTextColumn Header="Poste"  Binding="{Binding Affectation}" Width="110"/>
+                                            <DataGridTextColumn Header="Score"  Binding="{Binding ScoreGeneral}" Width="60"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- VS -->
+                        <TextBlock Grid.Column="1" Text="VS"
+                                   FontSize="28" FontWeight="Black"
+                                   Foreground="{StaticResource DangerBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        <!-- Équipe 2 -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="ÉQUIPE 2" Style="{StaticResource FormLabel}"/>
+                            <ComboBox x:Name="CbEq2" Style="{StaticResource ModernComboBox}"
+                                      DisplayMemberPath="Nom"
+                                      SelectionChanged="Equipe_SelectionChanged"/>
+                            <Border x:Name="PanelEq2" Background="{StaticResource CardBrush}"
+                                    CornerRadius="6" Margin="0,10,0,0" Padding="12"
+                                    Visibility="Collapsed">
+                                <StackPanel>
+                                    <TextBlock x:Name="TbEq2Score"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               FontWeight="Bold" FontSize="13"
+                                               Margin="0,0,0,6"/>
+                                    <DataGrid x:Name="GridEq2" MaxHeight="140"
+                                              Background="Transparent"
+                                              RowBackground="Transparent"
+                                              AlternatingRowBackground="#1A2332">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Nom"    Binding="{Binding Nom}"       Width="*"/>
+                                            <DataGridTextColumn Header="Poste"  Binding="{Binding Affectation}" Width="110"/>
+                                            <DataGridTextColumn Header="Score"  Binding="{Binding ScoreGeneral}" Width="60"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Bouton simuler -->
+                    <Button Grid.Row="1" x:Name="BtnSimuler"
+                            Content="SIMULER LE MATCH"
+                            Style="{StaticResource BtnDanger}"
+                            HorizontalAlignment="Center" Margin="0,20"
+                            Padding="30,12" FontSize="15"
+                            IsEnabled="False"
+                            Click="Simuler_Click"/>
+
+                    <!-- Résultats -->
+                    <Border Grid.Row="2" x:Name="PanelResultats"
+                            Background="{StaticResource CardBrush}"
+                            CornerRadius="8" Padding="20"
+                            Visibility="Collapsed">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Score final -->
+                            <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,16">
+                                <TextBlock x:Name="TbVainqueur"
+                                           FontSize="14" Foreground="{StaticResource MutedBrush}"
+                                           HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="TbScoreFinal"
+                                           FontSize="42" FontWeight="Black" Foreground="White"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Scores mi-temps -->
+                            <StackPanel Grid.Row="1" Orientation="Horizontal"
+                                        HorizontalAlignment="Center" Margin="0,0,0,16">
+                                <TextBlock x:Name="TbMT1"
+                                           Foreground="{StaticResource MutedBrush}" FontSize="13"
+                                           Margin="0,0,20,0"/>
+                                <TextBlock x:Name="TbMT2"
+                                           Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                            </StackPanel>
+
+                            <!-- Buteurs + Blessures -->
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <TextBlock Text="BUTEURS" Style="{StaticResource FormLabel}"
+                                               Margin="0,0,0,8"/>
+                                    <TextBox x:Name="TbButeurs"
+                                             IsReadOnly="True" TextWrapping="Wrap"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Foreground="{StaticResource TextBrush}"
+                                             FontSize="13"/>
+
+                                    <TextBlock x:Name="LblBlessuresHeader"
+                                               Text="BLESSURES" Style="{StaticResource FormLabel}"
+                                               Margin="0,14,0,8" Visibility="Collapsed"/>
+                                    <TextBox x:Name="TbBlessures"
+                                             IsReadOnly="True" TextWrapping="Wrap"
+                                             Background="Transparent" BorderThickness="0"
+                                             Foreground="#E74C3C" FontSize="13"
+                                             Visibility="Collapsed"/>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <!-- Bouton enregistrer -->
+                            <Button Grid.Row="3" x:Name="BtnSauver"
+                                    Content="Enregistrer le match"
+                                    Style="{StaticResource BtnSuccess}"
+                                    HorizontalAlignment="Right" Margin="0,12,0,0"
+                                    Click="Sauver_Click"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- ══════════════ ONGLET HISTORIQUE ══════════════ -->
+            <TabItem Header="  Historique  " Foreground="{StaticResource TextBrush}"
+                     Background="{StaticResource CardBrush}"
+                     GotFocus="HistoriqueTab_GotFocus">
+                <Grid Margin="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <DataGrid x:Name="GridHistorique">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date"       Binding="{Binding DateDisplay}"  Width="140"/>
+                            <DataGridTextColumn Header="Équipe 1"   Binding="{Binding NomEquipe1}"   Width="*"/>
+                            <DataGridTextColumn Header="Score"      Binding="{Binding Resultat}"     Width="80"/>
+                            <DataGridTextColumn Header="Équipe 2"   Binding="{Binding NomEquipe2}"   Width="*"/>
+                            <DataGridTextColumn Header="Vainqueur"  Binding="{Binding Vainqueur}"    Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Grid.Row="1" Content="Actualiser"
+                            Style="{StaticResource BtnSecondary}"
+                            HorizontalAlignment="Right" Margin="0,10,0,0"
+                            Click="ActualiserHisto_Click"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- FOOTER -->
+        <Border Grid.Row="2" Background="#0E0826"
+                BorderBrush="{StaticResource SeparatorBrush}" BorderThickness="0,1,0,0">
+            <Button Content="←  Retour" Style="{StaticResource BtnSecondary}"
+                    HorizontalAlignment="Right" Margin="0,0,16,0"
+                    Click="Retour_Click"/>
+        </Border>
+    </Grid>
+</Window>

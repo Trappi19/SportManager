@@ -1,0 +1,20 @@
+﻿SportManager
+
+
+winexe
+C#
+.cs
+C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\SportManager\obj\Debug\net10.0-windows\
+SportManager
+none
+false
+TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
+C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\SportManager\App.xaml
+81177317885
+
+18-1294216922
+2131191768052
+CreatePlayerDialog.xaml;CreateTeamDialog.xaml;EditPlayerDialog.xaml;EditTeamDialog.xaml;EquipesWindow.xaml;JoueursWindow.xaml;MainWindow.xaml;MatchWindow.xaml;
+
+False
+

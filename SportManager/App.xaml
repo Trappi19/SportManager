@@ -282,6 +282,42 @@
                 </Style.Triggers>
             </Style>
 
+            <!-- TabItem -->
+            <Style TargetType="TabItem">
+                <Setter Property="Foreground"        Value="#7060A8"/>
+                <Setter Property="Background"        Value="#1C1248"/>
+                <Setter Property="BorderThickness"   Value="0"/>
+                <Setter Property="Padding"           Value="16,8"/>
+                <Setter Property="FontSize"          Value="13"/>
+                <Setter Property="FontWeight"        Value="SemiBold"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
+                            <Border x:Name="Root"
+                                    Background="{TemplateBinding Background}"
+                                    Padding="{TemplateBinding Padding}"
+                                    BorderThickness="0,0,0,3"
+                                    BorderBrush="Transparent">
+                                <ContentPresenter ContentSource="Header"
+                                                  TextBlock.Foreground="{TemplateBinding Foreground}"
+                                                  TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Root" Property="Background"    Value="#251660"/>
+                                    <Setter TargetName="Root" Property="BorderBrush"   Value="#F5A623"/>
+                                    <Setter Property="Foreground"                      Value="White"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="#1E1450"/>
+                                    <Setter Property="Foreground"                   Value="White"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- Slider -->
             <Style x:Key="ModernSlider" TargetType="Slider">
                 <Setter Property="Minimum"             Value="0"/>

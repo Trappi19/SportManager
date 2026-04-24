@@ -15,8 +15,6 @@ namespace SportManager
         private readonly DatabaseService _db  = new();
         private readonly Random          _rnd = new();
 
-        private static readonly string[] _notes = { "Excellent", "Bon", "Insuffisant" };
-
         private int  _idEq1, _idEq2, _scoreFinal1, _scoreFinal2;
         private bool _matchSimule;
         private bool _modeManuel;
@@ -26,7 +24,6 @@ namespace SportManager
         public MatchWindow()
         {
             InitializeComponent();
-            ((DataGridComboBoxColumn)ColNote).ItemsSource = _notes;
             LoadEquipes();
         }
 

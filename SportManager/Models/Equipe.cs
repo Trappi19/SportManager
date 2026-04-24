@@ -15,5 +15,7 @@ namespace SportManager.Models
             Joueurs.Count > 0
                 ? string.Join(", ", Joueurs.Select(j => j.Nom))
                 : string.Join(", ", JoueurIds);
+
+        public override string ToString() => Nom;
     }
 }

@@ -171,21 +171,8 @@
              PANNEAU DROIT  (atmosphérique, sombre)
              ═══════════════════════════════════════════ -->
         <Grid Grid.Column="1">
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#0E0826" Offset="0"/>
-                    <GradientStop Color="#1A1040" Offset="0.6"/>
-                    <GradientStop Color="#0A051E" Offset="1"/>
-                </LinearGradientBrush>
-            </Grid.Background>
-
-            <!-- Grand texte fantôme en arrière-plan -->
-            <TextBlock Text="QUIDDITCH&#x0a;MANAGER"
-                       FontSize="130" FontWeight="Black"
-                       Foreground="#130C30"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                       TextAlignment="Center" LineHeight="120"
-                       IsHitTestVisible="False"/>
+            <!-- Image de fond : stade de Quidditch (chargée en code-behind) -->
+            <Image x:Name="ImgFond" Stretch="UniformToFill"/>
 
             <!-- Badge version haut-droite (style "DOWNLOAD NOW") -->
             <Border HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -201,16 +188,6 @@
                            Padding="14,8"/>
             </Border>
 
-            <!-- Centre : slogan -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Bienvenue dans Quidditch Manager"
-                           FontSize="18" FontWeight="SemiBold"
-                           Foreground="#3D2D80"
-                           HorizontalAlignment="Center"/>
-                <TextBlock Text="Sélectionnez une option dans le menu"
-                           FontSize="13" Foreground="#2A1C60"
-                           HorizontalAlignment="Center" Margin="0,6,0,0"/>
-            </StackPanel>
 
             <!-- Stats bas-droite -->
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right"

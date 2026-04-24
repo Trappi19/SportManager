@@ -9,9 +9,18 @@ namespace SportManager
         public MainWindow()
         {
             InitializeComponent();
+            LoadBackground();
             try { _db.MigrateToV2(); } catch { }
+            try { _db.MigrateRandomStats(); } catch { }
             RefreshStats();
             LoadLastMatch();
+        }
+
+        private void LoadBackground()
+        {
+            const string path = @"c:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\SportManager\Resources\background.png";
+            var bi = new System.Windows.Media.Imaging.BitmapImage(new Uri(path));
+            ImgFond.Source = bi;
         }
 
         private void RefreshStats()

@@ -14,4 +14,10 @@
     <PackageReference Include="MySql.Data" Version="9.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Resources\background.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

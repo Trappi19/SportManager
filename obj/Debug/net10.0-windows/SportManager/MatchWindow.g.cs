@@ -284,7 +284,7 @@ namespace SportManager {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/SportManager;V1.0.0.0;component/sportmanager/matchwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SportManager;component/sportmanager/matchwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\SportManager\MatchWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

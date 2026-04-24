@@ -53,19 +53,37 @@ namespace SportManager
         // Boutons menu gauche
         private void OpenJoueurs_Click(object sender, RoutedEventArgs e)
         {
-            new JoueursWindow().ShowDialog();
-            RefreshStats();
+            var ctrl = new JoueursWindow();
+            ctrl.Retour += (_, _) => FermerSection();
+            OuvrirSection(ctrl);
         }
 
         private void OpenEquipes_Click(object sender, RoutedEventArgs e)
         {
-            new EquipesWindow().ShowDialog();
-            RefreshStats();
+            var ctrl = new EquipesWindow();
+            ctrl.Retour += (_, _) => FermerSection();
+            OuvrirSection(ctrl);
         }
 
         private void OpenMatch_Click(object sender, RoutedEventArgs e)
         {
-            new MatchWindow().ShowDialog();
+            var ctrl = new MatchWindow();
+            ctrl.Retour += (_, _) => FermerSection();
+            OuvrirSection(ctrl);
+        }
+
+        private void OuvrirSection(UserControl ctrl)
+        {
+            PanelContenu.Content = ctrl;
+            PanelAccueil.Visibility = Visibility.Collapsed;
+            PanelContenu.Visibility = Visibility.Visible;
+        }
+
+        private void FermerSection()
+        {
+            PanelContenu.Content = null;
+            PanelContenu.Visibility = Visibility.Collapsed;
+            PanelAccueil.Visibility = Visibility.Visible;
             RefreshStats();
             LoadLastMatch();
         }

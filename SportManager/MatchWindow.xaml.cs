@@ -8,8 +8,10 @@ using System.Windows.Controls;
 
 namespace SportManager
 {
-    public partial class MatchWindow : Window
+    public partial class MatchWindow : UserControl
     {
+        public event EventHandler? Retour;
+
         private readonly DatabaseService _db  = new();
         private readonly Random          _rnd = new();
 
@@ -88,6 +90,15 @@ namespace SportManager
             bool ready = eq1 != null && eq2 != null && eq1.Id != eq2.Id;
             BtnSimuler.IsEnabled = ready && !_modeManuel;
 
+            if (ready)
+            {
+                AfficherProbabilites(eq1!, eq2!);
+            }
+            else
+            {
+                PanelProba.Visibility = Visibility.Collapsed;
+            }
+
             if (_modeManuel && ready)
             {
                 TbManuelNom1.Text = eq1!.Nom;
@@ -108,9 +119,24 @@ namespace SportManager
         {
             if (eq == null) { panel.Visibility = Visibility.Collapsed; return; }
             int scoreEffectif = _db.CalcScoreAvecBlessures(eq.JoueurIds);
-            scoreLabel.Text  = $"Score effectif (avec blessures) : {scoreEffectif} / 10";
+            scoreLabel.Text  = $"Score effectif (avec blessures) : {scoreEffectif} / 100";
             grid.ItemsSource = eq.Joueurs;
             panel.Visibility = Visibility.Visible;
+        }
+
+        private void AfficherProbabilites(Equipe eq1, Equipe eq2)
+        {
+            int s1 = _db.CalcScoreAvecBlessures(eq1.JoueurIds);
+            int s2 = _db.CalcScoreAvecBlessures(eq2.JoueurIds);
+            double total = s1 + s2;
+            int p1 = total > 0 ? (int)Math.Round(s1 / total * 100) : 50;
+            int p2 = 100 - p1;
+
+            TbProba1NomEquipe.Text = eq1.Nom.ToUpper();
+            TbProba2NomEquipe.Text = eq2.Nom.ToUpper();
+            TbProba1.Text = $"{p1}%";
+            TbProba2.Text = $"{p2}%";
+            PanelProba.Visibility = Visibility.Visible;
         }
 
         // ─────────────────── SIMULATION ────────────────────────
@@ -279,6 +305,7 @@ namespace SportManager
                     ? "\n\nBlessures : " + string.Join(", ", notifs)
                     : "";
 
+                PanelSaisieManuelle.Visibility = Visibility.Collapsed;
                 PrepareEvaluation();
                 MessageBox.Show(
                     $"Match enregistré ({eq1.Nom} {s1} — {s2} {eq2.Nom}).{notifTxt}\n\nÉvaluez maintenant les joueurs.",
@@ -354,6 +381,6 @@ namespace SportManager
             }
         }
 
-        private void Retour_Click(object s, RoutedEventArgs e) => Close();
+        private void Retour_Click(object s, RoutedEventArgs e) => Retour?.Invoke(this, EventArgs.Empty);
     }
 }

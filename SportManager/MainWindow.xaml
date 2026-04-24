@@ -171,6 +171,9 @@
              PANNEAU DROIT  (atmosphérique, sombre)
              ═══════════════════════════════════════════ -->
         <Grid Grid.Column="1">
+
+            <!-- Accueil : image + stats (masqué quand une section est ouverte) -->
+            <Grid x:Name="PanelAccueil">
             <!-- Image de fond : stade de Quidditch (chargée en code-behind) -->
             <Image x:Name="ImgFond" Stretch="UniformToFill"/>
 
@@ -238,6 +241,13 @@
                 </Border>
 
             </StackPanel>
+            </Grid><!-- fin PanelAccueil -->
+
+            <!-- Section inline (Joueurs / Équipes / Matchs) -->
+            <ContentControl x:Name="PanelContenu"
+                            Background="{StaticResource BackgroundBrush}"
+                            Visibility="Collapsed"/>
+
         </Grid>
     </Grid>
 </Window>

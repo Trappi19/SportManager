@@ -484,30 +484,49 @@ namespace SportManager.Services
                            r.GetInt32(4),r.GetInt32(5),r.GetInt32(6) };
         }
 
+        // Score effectif pondéré par poste (0-100), avec malus blessure
         public int CalcScoreAvecBlessures(int[] ids)
         {
             using var conn = Open();
-            int somme = 0, count = 0;
+            double somme = 0; int count = 0;
             const string sql = @"
-                SELECT j.score_general, j.id_blessure, b.pénalité
+                SELECT j.score_defense, j.score_attaque, j.score_vitesse, j.score_endurance,
+                       j.affectation_joueur, j.id_blessure, b.pénalité
                 FROM joueurs j
                 LEFT JOIN blessures b ON j.id_blessure = b.id_blessure
                 WHERE j.id_joueur=@id;";
             foreach (int id in ids)
             {
+                if (id == 0) continue;
                 using var cmd = new MySqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@id", id);
                 using var r = cmd.ExecuteReader();
-                if (r.Read())
+                if (!r.Read()) continue;
+
+                int def   = r.IsDBNull(r.GetOrdinal("score_defense"))   ? 0 : r.GetInt32("score_defense");
+                int att   = r.IsDBNull(r.GetOrdinal("score_attaque"))   ? 0 : r.GetInt32("score_attaque");
+                int vit   = r.IsDBNull(r.GetOrdinal("score_vitesse"))   ? 0 : r.GetInt32("score_vitesse");
+                int end_  = r.IsDBNull(r.GetOrdinal("score_endurance")) ? 0 : r.GetInt32("score_endurance");
+                string poste = r.IsDBNull(r.GetOrdinal("affectation_joueur")) ? "" : r.GetString("affectation_joueur");
+
+                // Pondération par rôle : chaque poids somme à 1.0
+                double score = poste switch
                 {
-                    int score = r.IsDBNull(r.GetOrdinal("score_general")) ? 0 : r.GetInt32("score_general");
-                    if (!r.IsDBNull(r.GetOrdinal("id_blessure")) && !r.IsDBNull(r.GetOrdinal("pénalité")))
-                        score += Convert.ToInt32(r["pénalité"]);
-                    somme += Math.Clamp(score, 0, 10);
-                    count++;
-                }
+                    "Gardien"     => def * 0.50 + end_ * 0.30 + vit * 0.10 + att * 0.10,
+                    "Poursuiveur" => att * 0.40 + vit  * 0.30 + def * 0.20 + end_ * 0.10,
+                    "Batteur"     => end_ * 0.40 + def * 0.30 + att * 0.20 + vit  * 0.10,
+                    "Attrapeur"   => vit  * 0.50 + end_ * 0.30 + att * 0.10 + def  * 0.10,
+                    _             => (def + att + vit + end_) / 4.0,
+                };
+
+                // Malus blessure
+                if (!r.IsDBNull(r.GetOrdinal("id_blessure")) && !r.IsDBNull(r.GetOrdinal("pénalité")))
+                    score = Math.Max(0, score + r.GetInt32("pénalité"));
+
+                somme += Math.Clamp(score, 0, 100);
+                count++;
             }
-            return count > 0 ? somme / count : 0;
+            return count > 0 ? (int)Math.Round(somme / count) : 0;
         }
 
         public List<int> GetPoursuiveurs(int[] ids)

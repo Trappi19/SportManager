@@ -5,8 +5,10 @@ using System.Linq;
 
 namespace SportManager
 {
-    public partial class EquipesWindow : Window
+    public partial class EquipesWindow : UserControl
     {
+        public event EventHandler? Retour;
+
         private readonly DatabaseService _db = new();
         private List<Equipe> _all = new();
         private bool _modeCreation;
@@ -190,6 +192,6 @@ namespace SportManager
 
         private void AnnulerForm_Click(object s, RoutedEventArgs e) => HideForm();
         private void Actualiser_Click(object s, RoutedEventArgs e)   => Load();
-        private void Retour_Click(object s, RoutedEventArgs e)        => Close();
+        private void Retour_Click(object s, RoutedEventArgs e)        => Retour?.Invoke(this, EventArgs.Empty);
     }
 }

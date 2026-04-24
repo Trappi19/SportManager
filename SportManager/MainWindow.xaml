@@ -72,7 +72,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>  <!-- En-tête logo -->
                 <RowDefinition Height="*"/>     <!-- Menu -->
-                <RowDefinition Height="Auto"/>  <!-- Stats bas -->
             </Grid.RowDefinitions>
 
             <!-- ── En-tête logo ── -->
@@ -154,31 +153,18 @@
 
                 <Border Style="{StaticResource Sep}"/>
 
+                <Button Style="{StaticResource MenuBtn}" Click="Quitter_Click">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="QUITTER" FontSize="15" FontWeight="Bold"/>
+                        <TextBlock Text="Fermer l'application"
+                                   FontSize="11" Foreground="#7060A8" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Button>
+
+                <Border Style="{StaticResource Sep}"/>
+
             </StackPanel>
 
-            <!-- ── Stats bas de page ── -->
-            <Border Grid.Row="2" Background="#0E0826" Padding="22,16">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
-                        <TextBlock Text="● " Foreground="#F5A623" FontSize="10"
-                                   VerticalAlignment="Center"/>
-                        <TextBlock x:Name="StatJoueurs" Text="—"
-                                   Foreground="#7060A8" FontSize="12"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
-                        <TextBlock Text="● " Foreground="#F5A623" FontSize="10"
-                                   VerticalAlignment="Center"/>
-                        <TextBlock x:Name="StatEquipes" Text="—"
-                                   Foreground="#7060A8" FontSize="12"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="● " Foreground="#F5A623" FontSize="10"
-                                   VerticalAlignment="Center"/>
-                        <TextBlock x:Name="StatMatchs" Text="—"
-                                   Foreground="#7060A8" FontSize="12"/>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
         </Grid>
 
         <!-- ═══════════════════════════════════════════
@@ -226,32 +212,52 @@
                            HorizontalAlignment="Center" Margin="0,6,0,0"/>
             </StackPanel>
 
-            <!-- Mini-cartes bas-droite (style FM) -->
+            <!-- Stats bas-droite -->
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                        Margin="0,0,28,28" Width="200">
+                        Margin="0,0,28,28" Width="220">
 
-                <Border Style="{StaticResource MiniCard}"
-                        MouseLeftButtonUp="OpenMatch_Click2">
-                    <TextBlock Text="Dernier match" Foreground="White"
-                               FontSize="13" FontWeight="SemiBold"/>
+                <Border Style="{StaticResource MiniCard}">
+                    <DockPanel>
+                        <TextBlock Text="JOUEURS" DockPanel.Dock="Left"
+                                   Foreground="#7060A8" FontSize="11" FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StatJoueurs" Text="—"
+                                   Foreground="White" FontSize="13" FontWeight="Bold"
+                                   HorizontalAlignment="Right"/>
+                    </DockPanel>
                 </Border>
 
                 <Border Style="{StaticResource MiniCard}">
-                    <TextBlock x:Name="TbLastMatch"
-                               Text="Aucun match joué" Foreground="#5040A0"
-                               FontSize="12" TextWrapping="Wrap"/>
+                    <DockPanel>
+                        <TextBlock Text="ÉQUIPES" DockPanel.Dock="Left"
+                                   Foreground="#7060A8" FontSize="11" FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StatEquipes" Text="—"
+                                   Foreground="White" FontSize="13" FontWeight="Bold"
+                                   HorizontalAlignment="Right"/>
+                    </DockPanel>
                 </Border>
 
-                <Border Style="{StaticResource MiniCard}"
-                        MouseLeftButtonUp="OpenJoueurs_Click2">
-                    <TextBlock Text="Joueurs" Foreground="White"
-                               FontSize="13" FontWeight="SemiBold"/>
+                <Border Style="{StaticResource MiniCard}">
+                    <DockPanel>
+                        <TextBlock Text="MATCHS" DockPanel.Dock="Left"
+                                   Foreground="#7060A8" FontSize="11" FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StatMatchs" Text="—"
+                                   Foreground="White" FontSize="13" FontWeight="Bold"
+                                   HorizontalAlignment="Right"/>
+                    </DockPanel>
                 </Border>
 
-                <Border Style="{StaticResource MiniCard}"
-                        MouseLeftButtonUp="OpenEquipes_Click2">
-                    <TextBlock Text="Équipes" Foreground="White"
-                               FontSize="13" FontWeight="SemiBold"/>
+                <Border Style="{StaticResource MiniCard}">
+                    <StackPanel>
+                        <TextBlock Text="DERNIER MATCH"
+                                   Foreground="#7060A8" FontSize="11" FontWeight="Bold"
+                                   Margin="0,0,0,4"/>
+                        <TextBlock x:Name="TbLastMatch"
+                                   Text="Aucun match joué" Foreground="#5040A0"
+                                   FontSize="12" TextWrapping="Wrap"/>
+                    </StackPanel>
                 </Border>
 
             </StackPanel>

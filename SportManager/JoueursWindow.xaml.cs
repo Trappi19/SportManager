@@ -62,7 +62,8 @@ namespace SportManager
             TbFormTitle.Text  = "NOUVEAU JOUEUR";
             TbNom.Text        = string.Empty;
             CbPoste.SelectedIndex = -1;
-            SlDef.Value = SlAtt.Value = SlGoal.Value = 0;
+            SlDef.Value = SlAtt.Value = SlVitesse.Value = SlEndurance.Value = 0;
+            PanelButs.Visibility = Visibility.Collapsed;
             UpdateScoreLabel();
             FormPanel.Visibility = Visibility.Visible;
         }
@@ -75,7 +76,10 @@ namespace SportManager
             TbNom.Text        = j.Nom;
             SlDef.Value       = j.ScoreDefense;
             SlAtt.Value       = j.ScoreAttaque;
-            SlGoal.Value      = j.ScoreGoal;
+            SlVitesse.Value   = j.ScoreVitesse;
+            SlEndurance.Value = j.ScoreEndurance;
+            TbButs.Text       = j.ButsMarques.ToString();
+            PanelButs.Visibility = Visibility.Visible;
             CbPoste.SelectedIndex = -1;
             foreach (ComboBoxItem item in CbPoste.Items)
                 if (item.Content.ToString() == j.Affectation)
@@ -91,15 +95,40 @@ namespace SportManager
         }
 
         private void Score_Changed(object s, RoutedPropertyChangedEventArgs<double> e)
-            => UpdateScoreLabel();
+        {
+            UpdateScoreLabel();
+            UpdatePosteBadge();
+        }
+
+        private void CbPoste_Changed(object s, SelectionChangedEventArgs e) => UpdatePosteBadge();
 
         private void UpdateScoreLabel()
         {
             if (LblDef == null) return;
-            LblDef.Text  = ((int)SlDef.Value).ToString();
-            LblAtt.Text  = ((int)SlAtt.Value).ToString();
-            LblGoal.Text = ((int)SlGoal.Value).ToString();
-            LblGen.Text  = $"{Joueur.CalculerScoreGeneral((int)SlDef.Value, (int)SlAtt.Value, (int)SlGoal.Value)} / 10";
+            LblDef.Text      = ((int)SlDef.Value).ToString();
+            LblAtt.Text      = ((int)SlAtt.Value).ToString();
+            LblVitesse.Text  = ((int)SlVitesse.Value).ToString();
+            LblEndurance.Text = ((int)SlEndurance.Value).ToString();
+            int gen = Joueur.CalculerScoreGeneral(
+                (int)SlDef.Value, (int)SlAtt.Value, (int)SlVitesse.Value, (int)SlEndurance.Value);
+            LblGen.Text = $"{gen} / 100";
+        }
+
+        private void UpdatePosteBadge()
+        {
+            if (TbExigences == null || CbPoste?.SelectedItem == null) return;
+            string poste = ((ComboBoxItem)CbPoste.SelectedItem).Content.ToString()!;
+            string exigences = Joueur.ExigencesPoste(poste);
+            TbExigences.Text = exigences;
+
+            bool ok = Joueur.QualifiePour(poste,
+                (int)SlDef.Value, (int)SlAtt.Value,
+                (int)SlVitesse.Value, (int)SlEndurance.Value);
+            TbExigences.Foreground = ok
+                ? new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0x2E, 0xCC, 0x71))
+                : new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0xE7, 0x4C, 0x3C));
         }
 
         // ── Boutons footer ────────────────────────────────────
@@ -134,8 +163,9 @@ namespace SportManager
             { MessageBox.Show("Veuillez sélectionner un poste.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
 
             string poste = ((ComboBoxItem)CbPoste.SelectedItem).Content.ToString()!;
-            int def = (int)SlDef.Value, att = (int)SlAtt.Value, goal = (int)SlGoal.Value;
-            int gen = Joueur.CalculerScoreGeneral(def, att, goal);
+            int def = (int)SlDef.Value, att = (int)SlAtt.Value;
+            int vit = (int)SlVitesse.Value, end = (int)SlEndurance.Value;
+            int gen = Joueur.CalculerScoreGeneral(def, att, vit, end);
 
             try
             {
@@ -145,18 +175,21 @@ namespace SportManager
                     {
                         Nom = TbNom.Text.Trim(), Affectation = poste,
                         ScoreDefense = def, ScoreAttaque = att,
-                        ScoreGoal = goal, ScoreGeneral = gen,
+                        ScoreVitesse = vit, ScoreEndurance = end, ScoreGeneral = gen,
                     });
                 }
                 else if (_joueurEnEdition != null)
                 {
-                    _joueurEnEdition.Nom = TbNom.Text.Trim();
-                    _joueurEnEdition.Affectation  = poste;
-                    _joueurEnEdition.ScoreDefense = def;
-                    _joueurEnEdition.ScoreAttaque = att;
-                    _joueurEnEdition.ScoreGoal    = goal;
-                    _joueurEnEdition.ScoreGeneral = gen;
+                    _joueurEnEdition.Nom           = TbNom.Text.Trim();
+                    _joueurEnEdition.Affectation   = poste;
+                    _joueurEnEdition.ScoreDefense  = def;
+                    _joueurEnEdition.ScoreAttaque  = att;
+                    _joueurEnEdition.ScoreVitesse  = vit;
+                    _joueurEnEdition.ScoreEndurance = end;
+                    _joueurEnEdition.ScoreGeneral  = gen;
                     _db.UpdateJoueur(_joueurEnEdition);
+                    if (int.TryParse(TbButs.Text, out int buts) && buts >= 0)
+                        _db.UpdateButsMarques(_joueurEnEdition.Id, buts);
                 }
                 HideForm();
                 Load();

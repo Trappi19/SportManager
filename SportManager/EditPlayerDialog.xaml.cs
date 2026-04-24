@@ -20,7 +20,7 @@ namespace SportManager
             TbNom.Text   = _joueur.Nom;
             SlDef.Value  = _joueur.ScoreDefense;
             SlAtt.Value  = _joueur.ScoreAttaque;
-            SlGoal.Value = _joueur.ScoreGoal;
+            SlGoal.Value = _joueur.ScoreVitesse;
 
             foreach (ComboBoxItem item in CbPoste.Items)
                 if (item.Content.ToString() == _joueur.Affectation)
@@ -63,9 +63,9 @@ namespace SportManager
                 _joueur.Affectation  = ((ComboBoxItem)CbPoste.SelectedItem).Content.ToString()!;
                 _joueur.ScoreDefense = (int)SlDef.Value;
                 _joueur.ScoreAttaque = (int)SlAtt.Value;
-                _joueur.ScoreGoal    = (int)SlGoal.Value;
+                _joueur.ScoreVitesse    = (int)SlGoal.Value;
                 _joueur.ScoreGeneral = Joueur.CalculerScoreGeneral(
-                    _joueur.ScoreDefense, _joueur.ScoreAttaque, _joueur.ScoreGoal);
+                    _joueur.ScoreDefense, _joueur.ScoreAttaque, _joueur.ScoreVitesse);
                 _db.UpdateJoueur(_joueur);
                 DialogResult = true;
             }

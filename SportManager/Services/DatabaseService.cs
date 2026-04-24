@@ -17,6 +17,103 @@ namespace SportManager.Services
             return c;
         }
 
+        // Randomise les stats de tous les joueurs selon leur poste (tourne une seule fois)
+        public void MigrateRandomStats()
+        {
+            using var conn = Open();
+
+            using (var cmd = new MySqlCommand(@"
+                CREATE TABLE IF NOT EXISTS migrations (
+                    nom VARCHAR(100) PRIMARY KEY
+                );", conn))
+                cmd.ExecuteNonQuery();
+
+            using (var check = new MySqlCommand(
+                "SELECT COUNT(*) FROM migrations WHERE nom = 'random_stats_v1';", conn))
+            {
+                if (Convert.ToInt32(check.ExecuteScalar()) > 0) return;
+            }
+
+            // Poursuiveur : Attaque ≥ 55, Vitesse ≥ 45
+            string[] sqls =
+            {
+                @"UPDATE joueurs SET
+                    score_defense   = FLOOR(20 + RAND() * 45),
+                    score_attaque   = FLOOR(55 + RAND() * 37),
+                    score_vitesse   = FLOOR(45 + RAND() * 43),
+                    score_endurance = FLOOR(30 + RAND() * 40)
+                  WHERE affectation_joueur = 'Poursuiveur';",
+
+                // Batteur : Défense ≥ 55, Endurance ≥ 45
+                @"UPDATE joueurs SET
+                    score_defense   = FLOOR(55 + RAND() * 37),
+                    score_attaque   = FLOOR(30 + RAND() * 40),
+                    score_vitesse   = FLOOR(25 + RAND() * 40),
+                    score_endurance = FLOOR(45 + RAND() * 40)
+                  WHERE affectation_joueur = 'Batteur';",
+
+                // Gardien : Défense ≥ 65, Endurance ≥ 55
+                @"UPDATE joueurs SET
+                    score_defense   = FLOOR(65 + RAND() * 30),
+                    score_attaque   = FLOOR(20 + RAND() * 35),
+                    score_vitesse   = FLOOR(25 + RAND() * 35),
+                    score_endurance = FLOOR(55 + RAND() * 35)
+                  WHERE affectation_joueur = 'Gardien';",
+
+                // Attrapeur : Vitesse ≥ 72, Endurance ≥ 45
+                @"UPDATE joueurs SET
+                    score_defense   = FLOOR(25 + RAND() * 35),
+                    score_attaque   = FLOOR(30 + RAND() * 35),
+                    score_vitesse   = FLOOR(72 + RAND() * 25),
+                    score_endurance = FLOOR(45 + RAND() * 35)
+                  WHERE affectation_joueur = 'Attrapeur';"
+            };
+
+            foreach (var sql in sqls)
+            {
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.ExecuteNonQuery();
+            }
+
+            using (var gen = new MySqlCommand(@"
+                UPDATE joueurs
+                SET score_general = (score_defense + score_attaque + score_vitesse + score_endurance) / 4;", conn))
+                gen.ExecuteNonQuery();
+
+            using (var mark = new MySqlCommand(
+                "INSERT INTO migrations (nom) VALUES ('random_stats_v1');", conn))
+                mark.ExecuteNonQuery();
+        }
+
+        // Ajoute score_endurance si absent et monte les stats de 0-10 à 0-100
+        public void MigrateToV2()
+        {
+            using var conn = Open();
+            bool exists;
+            using (var cmd = new MySqlCommand(@"
+                SELECT COUNT(*) FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME   = 'joueurs'
+                  AND COLUMN_NAME  = 'score_endurance';", conn))
+                exists = Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+
+            if (!exists)
+            {
+                using var addCol = new MySqlCommand(
+                    "ALTER TABLE joueurs ADD COLUMN score_endurance INT NOT NULL DEFAULT 50;", conn);
+                addCol.ExecuteNonQuery();
+
+                using var scale = new MySqlCommand(@"
+                    UPDATE joueurs
+                    SET score_defense  = score_defense  * 10,
+                        score_attaque  = score_attaque  * 10,
+                        score_vitesse  = score_vitesse  * 10,
+                        score_endurance = 50,
+                        score_general  = score_general  * 10;", conn);
+                scale.ExecuteNonQuery();
+            }
+        }
+
         // ─────────────────────────── JOUEURS ────────────────────────────
 
         public List<Joueur> GetAllJoueurs()
@@ -25,8 +122,9 @@ namespace SportManager.Services
             using var conn = Open();
             const string sql = @"
                 SELECT j.id_joueur, j.nom_joueur, j.score_defense, j.score_attaque,
-                       j.score_goal, j.score_general, j.affectation_joueur,
+                       j.score_vitesse, j.score_endurance, j.score_general, j.affectation_joueur,
                        j.id_blessure, j.matchs_restants_blessure,
+                       j.score_goal AS buts_marques,
                        b.type_blessure, b.pénalité
                 FROM joueurs j
                 LEFT JOIN blessures b ON j.id_blessure = b.id_blessure
@@ -44,8 +142,9 @@ namespace SportManager.Services
             using var conn = Open();
             const string sql = @"
                 SELECT id_joueur, nom_joueur, score_general, affectation_joueur,
-                       0 AS score_defense, 0 AS score_attaque, 0 AS score_goal,
+                       0 AS score_defense, 0 AS score_attaque, 0 AS score_vitesse, 0 AS score_endurance,
                        NULL AS id_blessure, 0 AS matchs_restants_blessure,
+                       score_goal AS buts_marques,
                        NULL AS type_blessure, NULL AS pénalité
                 FROM joueurs
                 WHERE affectation_joueur = @a
@@ -63,8 +162,9 @@ namespace SportManager.Services
             using var conn = Open();
             const string sql = @"
                 SELECT j.id_joueur, j.nom_joueur, j.score_defense, j.score_attaque,
-                       j.score_goal, j.score_general, j.affectation_joueur,
+                       j.score_vitesse, j.score_endurance, j.score_general, j.affectation_joueur,
                        j.id_blessure, j.matchs_restants_blessure,
+                       j.score_goal AS buts_marques,
                        b.type_blessure, b.pénalité
                 FROM joueurs j
                 LEFT JOIN blessures b ON j.id_blessure = b.id_blessure
@@ -88,8 +188,10 @@ namespace SportManager.Services
                 Nom                    = SafeStr(r, "nom_joueur"),
                 ScoreDefense           = SafeInt(r, "score_defense"),
                 ScoreAttaque           = SafeInt(r, "score_attaque"),
-                ScoreGoal              = SafeInt(r, "score_goal"),
+                ScoreVitesse           = SafeInt(r, "score_vitesse"),
+                ScoreEndurance         = SafeInt(r, "score_endurance"),
                 ScoreGeneral           = SafeInt(r, "score_general"),
+                ButsMarques            = SafeInt(r, "buts_marques"),
                 Affectation            = SafeStr(r, "affectation_joueur"),
                 IdBlessure             = r.IsDBNull(r.GetOrdinal("id_blessure"))   ? null : r.GetInt32("id_blessure"),
                 MatchsRestantsBlessure = SafeInt(r, "matchs_restants_blessure"),
@@ -103,13 +205,14 @@ namespace SportManager.Services
             using var conn = Open();
             const string sql = @"
                 INSERT INTO joueurs
-                    (nom_joueur, score_defense, score_attaque, score_goal, score_general, affectation_joueur)
-                VALUES (@nom, @def, @att, @goal, @gen, @affect);";
+                    (nom_joueur, score_defense, score_attaque, score_vitesse, score_endurance, score_general, affectation_joueur)
+                VALUES (@nom, @def, @att, @vit, @end, @gen, @affect);";
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@nom",    j.Nom);
             cmd.Parameters.AddWithValue("@def",    j.ScoreDefense);
             cmd.Parameters.AddWithValue("@att",    j.ScoreAttaque);
-            cmd.Parameters.AddWithValue("@goal",   j.ScoreGoal);
+            cmd.Parameters.AddWithValue("@vit",    j.ScoreVitesse);
+            cmd.Parameters.AddWithValue("@end",    j.ScoreEndurance);
             cmd.Parameters.AddWithValue("@gen",    j.ScoreGeneral);
             cmd.Parameters.AddWithValue("@affect", j.Affectation);
             cmd.ExecuteNonQuery();
@@ -121,14 +224,15 @@ namespace SportManager.Services
             const string sql = @"
                 UPDATE joueurs
                 SET nom_joueur=@nom, score_defense=@def, score_attaque=@att,
-                    score_goal=@goal, score_general=@gen, affectation_joueur=@affect
+                    score_vitesse=@vit, score_endurance=@end, score_general=@gen, affectation_joueur=@affect
                 WHERE id_joueur=@id;";
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@id",     j.Id);
             cmd.Parameters.AddWithValue("@nom",    j.Nom);
             cmd.Parameters.AddWithValue("@def",    j.ScoreDefense);
             cmd.Parameters.AddWithValue("@att",    j.ScoreAttaque);
-            cmd.Parameters.AddWithValue("@goal",   j.ScoreGoal);
+            cmd.Parameters.AddWithValue("@vit",    j.ScoreVitesse);
+            cmd.Parameters.AddWithValue("@end",    j.ScoreEndurance);
             cmd.Parameters.AddWithValue("@gen",    j.ScoreGeneral);
             cmd.Parameters.AddWithValue("@affect", j.Affectation);
             cmd.ExecuteNonQuery();
@@ -157,16 +261,18 @@ namespace SportManager.Services
             using var r = cmd.ExecuteReader();
             while (r.Read())
             {
+                static int SafeCol(MySqlDataReader rd, string col) =>
+                    rd.IsDBNull(rd.GetOrdinal(col)) ? 0 : rd.GetInt32(col);
                 var e = new Equipe
                 {
                     Id           = r.GetInt32("id_equipe"),
-                    Nom          = r.GetString("nom_equipe"),
-                    ScoreGeneral = r.GetInt32("score_general"),
+                    Nom          = r.IsDBNull(r.GetOrdinal("nom_equipe")) ? string.Empty : r.GetString("nom_equipe"),
+                    ScoreGeneral = SafeCol(r, "score_general"),
                     JoueurIds    = new[]
                     {
-                        r.GetInt32("id_joueur1"), r.GetInt32("id_joueur2"), r.GetInt32("id_joueur3"),
-                        r.GetInt32("id_joueur4"), r.GetInt32("id_joueur5"), r.GetInt32("id_joueur6"),
-                        r.GetInt32("id_joueur7")
+                        SafeCol(r,"id_joueur1"), SafeCol(r,"id_joueur2"), SafeCol(r,"id_joueur3"),
+                        SafeCol(r,"id_joueur4"), SafeCol(r,"id_joueur5"), SafeCol(r,"id_joueur6"),
+                        SafeCol(r,"id_joueur7")
                     }
                 };
                 list.Add(e);
@@ -227,6 +333,61 @@ namespace SportManager.Services
             return cmd.ExecuteNonQuery() > 0;
         }
 
+        public void EvaluerJoueur(int idJoueur, int delta)
+        {
+            if (delta == 0) return;
+            int def, att, vit, end;
+            using (var conn = Open())
+            {
+                using var cmd = new MySqlCommand(
+                    "SELECT score_defense, score_attaque, score_vitesse, score_endurance FROM joueurs WHERE id_joueur=@id;", conn);
+                cmd.Parameters.AddWithValue("@id", idJoueur);
+                using var r = cmd.ExecuteReader();
+                if (!r.Read()) return;
+                def = Math.Clamp(r.GetInt32(0) + delta, 0, 100);
+                att = Math.Clamp(r.GetInt32(1) + delta, 0, 100);
+                vit = Math.Clamp(r.GetInt32(2) + delta, 0, 100);
+                end = Math.Clamp(r.GetInt32(3) + delta, 0, 100);
+            }
+            int gen = (def + att + vit + end) / 4;
+            using (var conn = Open())
+            {
+                using var cmd = new MySqlCommand(
+                    "UPDATE joueurs SET score_defense=@d, score_attaque=@a, score_vitesse=@v, score_endurance=@e, score_general=@g WHERE id_joueur=@id;", conn);
+                cmd.Parameters.AddWithValue("@d", def);
+                cmd.Parameters.AddWithValue("@a", att);
+                cmd.Parameters.AddWithValue("@v", vit);
+                cmd.Parameters.AddWithValue("@e", end);
+                cmd.Parameters.AddWithValue("@g", gen);
+                cmd.Parameters.AddWithValue("@id", idJoueur);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void UpdateButsMarques(int idJoueur, int buts)
+        {
+            using var conn = Open();
+            using var cmd = new MySqlCommand(
+                "UPDATE joueurs SET score_goal=@b WHERE id_joueur=@id;", conn);
+            cmd.Parameters.AddWithValue("@b",  buts);
+            cmd.Parameters.AddWithValue("@id", idJoueur);
+            cmd.ExecuteNonQuery();
+        }
+
+        public void EnregistrerButs(List<ButInfo> buts)
+        {
+            if (buts.Count == 0) return;
+            using var conn = Open();
+            foreach (var groupe in buts.GroupBy(b => b.IdJoueur))
+            {
+                using var cmd = new MySqlCommand(
+                    "UPDATE joueurs SET score_goal = score_goal + @n WHERE id_joueur = @id;", conn);
+                cmd.Parameters.AddWithValue("@n",  groupe.Count());
+                cmd.Parameters.AddWithValue("@id", groupe.Key);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         private int CalcScoreEquipe(int[] ids)
         {
             using var conn = Open();
@@ -254,9 +415,9 @@ namespace SportManager.Services
             while (r.Read())
                 list.Add(new Blessure
                 {
-                    Id      = r.GetInt32("id_blessure"),
-                    Type    = r.GetString("type_blessure"),
-                    Penalite = r.GetInt32("pénalité"),
+                    Id       = r.GetInt32("id_blessure"),
+                    Type     = r.IsDBNull(r.GetOrdinal("type_blessure")) ? string.Empty : r.GetString("type_blessure"),
+                    Penalite = r.IsDBNull(r.GetOrdinal("pénalité"))      ? 0            : r.GetInt32("pénalité"),
                 });
             return list;
         }
@@ -339,7 +500,7 @@ namespace SportManager.Services
                 using var r = cmd.ExecuteReader();
                 if (r.Read())
                 {
-                    int score = r.GetInt32("score_general");
+                    int score = r.IsDBNull(r.GetOrdinal("score_general")) ? 0 : r.GetInt32("score_general");
                     if (!r.IsDBNull(r.GetOrdinal("id_blessure")) && !r.IsDBNull(r.GetOrdinal("pénalité")))
                         score += Convert.ToInt32(r["pénalité"]);
                     somme += Math.Clamp(score, 0, 10);
@@ -397,7 +558,7 @@ namespace SportManager.Services
                     {
                         if (!r.IsDBNull(r.GetOrdinal("id_blessure")))
                             idBlessure = r.GetInt32("id_blessure");
-                        restant = r.GetInt32("matchs_restants_blessure");
+                        restant = r.IsDBNull(r.GetOrdinal("matchs_restants_blessure")) ? 0 : r.GetInt32("matchs_restants_blessure");
                     }
                 }
 
@@ -427,7 +588,7 @@ namespace SportManager.Services
                     var b = blessures[rnd.Next(blessures.Count)];
                     using var conn = Open();
                     using var cmd = new MySqlCommand(
-                        "UPDATE joueurs SET id_blessure=@b, matchs_restants_blessure=1 WHERE id_joueur=@id;", conn);
+                        "UPDATE joueurs SET id_blessure=@b, matchs_restants_blessure=3 WHERE id_joueur=@id;", conn);
                     cmd.Parameters.AddWithValue("@b",  b.Id);
                     cmd.Parameters.AddWithValue("@id", idJoueur);
                     cmd.ExecuteNonQuery();

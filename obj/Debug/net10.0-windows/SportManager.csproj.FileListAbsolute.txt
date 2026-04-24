@@ -47,3 +47,4 @@ C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windo
 C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.pdb
 C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.genruntimeconfig.cache
 C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\ref\SportManager.dll
+C:\Users\Utilisateur\Desktop\CESI 2025-2026\Sportmanager\obj\Debug\net10.0-windows\SportManager_MarkupCompile.lref

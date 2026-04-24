@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\Sportmanager\\SportManager.csproj": {}
+    "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\SportManager\\SportManager.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\Sportmanager\\SportManager.csproj": {
+    "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\SportManager\\SportManager.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\Sportmanager\\SportManager.csproj",
+        "projectUniqueName": "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\SportManager\\SportManager.csproj",
         "projectName": "SportManager",
-        "projectPath": "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\Sportmanager\\SportManager.csproj",
+        "projectPath": "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\SportManager\\SportManager.csproj",
         "packagesPath": "C:\\Users\\Utilisateur\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\Sportmanager\\obj\\",
+        "outputPath": "C:\\Users\\Utilisateur\\Desktop\\CESI 2025-2026\\SportManager\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Utilisateur\\AppData\\Roaming\\NuGet\\NuGet.Config"

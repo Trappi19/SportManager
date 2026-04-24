@@ -37,12 +37,14 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID"       Binding="{Binding Id}"              Width="50"/>
                 <DataGridTextColumn Header="Nom"      Binding="{Binding Nom}"             Width="*"/>
-                <DataGridTextColumn Header="Défense"  Binding="{Binding ScoreDefense}"    Width="75"/>
-                <DataGridTextColumn Header="Attaque"  Binding="{Binding ScoreAttaque}"    Width="75"/>
-                <DataGridTextColumn Header="Goal"     Binding="{Binding ScoreGoal}"       Width="65"/>
-                <DataGridTextColumn Header="Général"  Binding="{Binding ScoreGeneral}"    Width="75"/>
-                <DataGridTextColumn Header="Poste"    Binding="{Binding Affectation}"     Width="130"/>
-                <DataGridTextColumn Header="Blessure" Binding="{Binding BlessureDisplay}" Width="*"/>
+                <DataGridTextColumn Header="Défense"   Binding="{Binding ScoreDefense}"   Width="65"/>
+                <DataGridTextColumn Header="Attaque"   Binding="{Binding ScoreAttaque}"   Width="65"/>
+                <DataGridTextColumn Header="Vitesse"   Binding="{Binding ScoreVitesse}"   Width="65"/>
+                <DataGridTextColumn Header="Endurance" Binding="{Binding ScoreEndurance}" Width="75"/>
+                <DataGridTextColumn Header="Général"   Binding="{Binding ScoreGeneral}"   Width="65"/>
+                <DataGridTextColumn Header="Buts"      Binding="{Binding ButsMarques}"    Width="50"/>
+                <DataGridTextColumn Header="Poste"     Binding="{Binding Affectation}"    Width="110"/>
+                <DataGridTextColumn Header="Blessure"  Binding="{Binding BlessureDisplay}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
 
@@ -82,49 +84,76 @@
                     <TextBox x:Name="TbNom" Style="{StaticResource ModernTextBox}" Margin="0,0,0,16"/>
 
                     <TextBlock Text="POSTE" Style="{StaticResource FormLabel}"/>
-                    <ComboBox x:Name="CbPoste" Style="{StaticResource ModernComboBox}" Margin="0,0,0,16">
+                    <ComboBox x:Name="CbPoste" Style="{StaticResource ModernComboBox}" Margin="0,0,0,6"
+                              SelectionChanged="CbPoste_Changed">
                         <ComboBoxItem Content="Poursuiveur"/>
                         <ComboBoxItem Content="Batteur"/>
                         <ComboBoxItem Content="Gardien"/>
                         <ComboBoxItem Content="Attrapeur"/>
                     </ComboBox>
+                    <Border Background="#150D35" CornerRadius="4" Padding="10,7" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="EXIGENCES DU POSTE"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10" FontWeight="Bold" Margin="0,0,0,3"/>
+                            <TextBlock x:Name="TbExigences" Text="—"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="11" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
 
-                    <TextBlock Text="SCORE DÉFENSE" Style="{StaticResource FormLabel}"/>
+                    <TextBlock Text="DÉFENSE (0-100)" Style="{StaticResource FormLabel}"/>
                     <DockPanel Margin="0,0,0,12">
-                        <TextBlock x:Name="LblDef" Text="0" DockPanel.Dock="Right" Width="30"
+                        <TextBlock x:Name="LblDef" Text="0" DockPanel.Dock="Right" Width="34"
                                    Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
                                    VerticalAlignment="Center" TextAlignment="Right"/>
                         <Slider x:Name="SlDef" Style="{StaticResource ModernSlider}"
-                                ValueChanged="Score_Changed"/>
+                                Maximum="100" ValueChanged="Score_Changed"/>
                     </DockPanel>
 
-                    <TextBlock Text="SCORE ATTAQUE" Style="{StaticResource FormLabel}"/>
+                    <TextBlock Text="ATTAQUE (0-100)" Style="{StaticResource FormLabel}"/>
                     <DockPanel Margin="0,0,0,12">
-                        <TextBlock x:Name="LblAtt" Text="0" DockPanel.Dock="Right" Width="30"
+                        <TextBlock x:Name="LblAtt" Text="0" DockPanel.Dock="Right" Width="34"
                                    Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
                                    VerticalAlignment="Center" TextAlignment="Right"/>
                         <Slider x:Name="SlAtt" Style="{StaticResource ModernSlider}"
-                                ValueChanged="Score_Changed"/>
+                                Maximum="100" ValueChanged="Score_Changed"/>
                     </DockPanel>
 
-                    <TextBlock Text="SCORE GOAL" Style="{StaticResource FormLabel}"/>
-                    <DockPanel Margin="0,0,0,16">
-                        <TextBlock x:Name="LblGoal" Text="0" DockPanel.Dock="Right" Width="30"
+                    <TextBlock Text="VITESSE (0-100)" Style="{StaticResource FormLabel}"/>
+                    <DockPanel Margin="0,0,0,12">
+                        <TextBlock x:Name="LblVitesse" Text="0" DockPanel.Dock="Right" Width="34"
                                    Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
                                    VerticalAlignment="Center" TextAlignment="Right"/>
-                        <Slider x:Name="SlGoal" Style="{StaticResource ModernSlider}"
-                                ValueChanged="Score_Changed"/>
+                        <Slider x:Name="SlVitesse" Style="{StaticResource ModernSlider}"
+                                Maximum="100" ValueChanged="Score_Changed"/>
                     </DockPanel>
 
-                    <Border Background="#150D35" CornerRadius="5" Padding="12,8" Margin="0,0,0,24">
+                    <TextBlock Text="ENDURANCE (0-100)" Style="{StaticResource FormLabel}"/>
+                    <DockPanel Margin="0,0,0,16">
+                        <TextBlock x:Name="LblEndurance" Text="0" DockPanel.Dock="Right" Width="34"
+                                   Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
+                                   VerticalAlignment="Center" TextAlignment="Right"/>
+                        <Slider x:Name="SlEndurance" Style="{StaticResource ModernSlider}"
+                                Maximum="100" ValueChanged="Score_Changed"/>
+                    </DockPanel>
+
+                    <Border Background="#150D35" CornerRadius="5" Padding="12,8" Margin="0,0,0,16">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Score général : "
                                        Foreground="{StaticResource MutedBrush}" FontSize="13"/>
-                            <TextBlock x:Name="LblGen" Text="0 / 10"
+                            <TextBlock x:Name="LblGen" Text="0 / 100"
                                        Foreground="{StaticResource AccentBrush}"
                                        FontWeight="Bold" FontSize="13"/>
                         </StackPanel>
                     </Border>
+
+                    <StackPanel x:Name="PanelButs" Visibility="Collapsed" Margin="0,0,0,24">
+                        <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,0,0,12"/>
+                        <TextBlock Text="BUTS MARQUES" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="TbButs" Style="{StaticResource ModernTextBox}"
+                                 Margin="0,0,0,4"/>
+                    </StackPanel>
 
                     <Button Content="Enregistrer" Style="{StaticResource BtnSuccess}"
                             Click="Enregistrer_Click" Margin="0,0,0,8"/>

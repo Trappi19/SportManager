@@ -4,21 +4,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Controls;
 
 namespace SportManager
 {
     public partial class MatchWindow : Window
     {
-        private readonly DatabaseService _db = new();
-        private readonly Random _rnd = new();
+        private readonly DatabaseService _db  = new();
+        private readonly Random          _rnd = new();
 
-        // Résultat du dernier match simulé (pour le sauvegarder)
-        private int _idEq1, _idEq2, _scoreFinal1, _scoreFinal2;
+        private static readonly string[] _notes = { "Excellent", "Bon", "Insuffisant" };
+
+        private int  _idEq1, _idEq2, _scoreFinal1, _scoreFinal2;
         private bool _matchSimule;
+        private bool _modeManuel;
+        private List<ButInfo>    _buts       = new();
+        private List<EvalJoueur> _evalJoueurs = new();
 
         public MatchWindow()
         {
             InitializeComponent();
+            ((DataGridComboBoxColumn)ColNote).ItemsSource = _notes;
             LoadEquipes();
         }
 
@@ -37,7 +43,39 @@ namespace SportManager
             }
         }
 
-        // ─────────────────────── SÉLECTION ÉQUIPES ──────────────────────
+        // ─────────────────── MODE ───────────────────────────────
+
+        private void ModeSimulation_Click(object s, RoutedEventArgs e)
+        {
+            _modeManuel = false;
+            BtnModeSimulation.Style = (Style)FindResource("BtnPrimary");
+            BtnModeSaisie.Style     = (Style)FindResource("BtnSecondary");
+            BtnSimuler.Visibility          = Visibility.Visible;
+            PanelSaisieManuelle.Visibility = Visibility.Collapsed;
+            PanelResultats.Visibility      = Visibility.Collapsed;
+            PanelEvaluation.Visibility     = Visibility.Collapsed;
+        }
+
+        private void ModeSaisie_Click(object s, RoutedEventArgs e)
+        {
+            _modeManuel = true;
+            BtnModeSimulation.Style = (Style)FindResource("BtnSecondary");
+            BtnModeSaisie.Style     = (Style)FindResource("BtnPrimary");
+            BtnSimuler.Visibility          = Visibility.Collapsed;
+            PanelResultats.Visibility      = Visibility.Collapsed;
+            PanelEvaluation.Visibility     = Visibility.Collapsed;
+
+            var eq1 = CbEq1.SelectedItem as Equipe;
+            var eq2 = CbEq2.SelectedItem as Equipe;
+            if (eq1 != null && eq2 != null && eq1.Id != eq2.Id)
+            {
+                TbManuelNom1.Text = eq1.Nom;
+                TbManuelNom2.Text = eq2.Nom;
+                PanelSaisieManuelle.Visibility = Visibility.Visible;
+            }
+        }
+
+        // ─────────────────── SÉLECTION ÉQUIPES ─────────────────
 
         private void Equipe_SelectionChanged(object s, SelectionChangedEventArgs e)
         {
@@ -47,8 +85,22 @@ namespace SportManager
             AfficherInfoEquipe(eq1, PanelEq1, TbEq1Score, GridEq1);
             AfficherInfoEquipe(eq2, PanelEq2, TbEq2Score, GridEq2);
 
-            BtnSimuler.IsEnabled = eq1 != null && eq2 != null && eq1.Id != eq2.Id;
-            PanelResultats.Visibility = Visibility.Collapsed;
+            bool ready = eq1 != null && eq2 != null && eq1.Id != eq2.Id;
+            BtnSimuler.IsEnabled = ready && !_modeManuel;
+
+            if (_modeManuel && ready)
+            {
+                TbManuelNom1.Text = eq1!.Nom;
+                TbManuelNom2.Text = eq2!.Nom;
+                PanelSaisieManuelle.Visibility = Visibility.Visible;
+            }
+            else if (!ready)
+            {
+                PanelSaisieManuelle.Visibility = Visibility.Collapsed;
+            }
+
+            PanelResultats.Visibility  = Visibility.Collapsed;
+            PanelEvaluation.Visibility = Visibility.Collapsed;
             _matchSimule = false;
         }
 
@@ -56,12 +108,12 @@ namespace SportManager
         {
             if (eq == null) { panel.Visibility = Visibility.Collapsed; return; }
             int scoreEffectif = _db.CalcScoreAvecBlessures(eq.JoueurIds);
-            scoreLabel.Text    = $"Score effectif (avec blessures) : {scoreEffectif} / 10";
-            grid.ItemsSource   = eq.Joueurs;
-            panel.Visibility   = Visibility.Visible;
+            scoreLabel.Text  = $"Score effectif (avec blessures) : {scoreEffectif} / 10";
+            grid.ItemsSource = eq.Joueurs;
+            panel.Visibility = Visibility.Visible;
         }
 
-        // ─────────────────────── SIMULATION ─────────────────────────────
+        // ─────────────────── SIMULATION ────────────────────────
 
         private void Simuler_Click(object s, RoutedEventArgs e)
         {
@@ -81,7 +133,6 @@ namespace SportManager
             int score1 = _db.CalcScoreAvecBlessures(eq1.JoueurIds);
             int score2 = _db.CalcScoreAvecBlessures(eq2.JoueurIds);
 
-            // ── Simulation intelligente ──
             int s1MT1 = SimulerButs(score1, score2);
             int s2MT1 = SimulerButs(score2, score1);
             int s1MT2 = SimulerButs(score1, score2);
@@ -92,18 +143,15 @@ namespace SportManager
             _idEq1 = eq1.Id;
             _idEq2 = eq2.Id;
 
-            // ── Attribution des buts aux poursuiveurs ──
-            var buts = new List<ButInfo>();
-            AttribuerButs(buts, s1MT1, eq1.Id, _db.GetPoursuiveurs(eq1.JoueurIds), 1);
-            AttribuerButs(buts, s2MT1, eq2.Id, _db.GetPoursuiveurs(eq2.JoueurIds), 1);
-            AttribuerButs(buts, s1MT2, eq1.Id, _db.GetPoursuiveurs(eq1.JoueurIds), 2);
-            AttribuerButs(buts, s2MT2, eq2.Id, _db.GetPoursuiveurs(eq2.JoueurIds), 2);
+            _buts = new List<ButInfo>();
+            AttribuerButs(_buts, s1MT1, eq1.Id, _db.GetPoursuiveurs(eq1.JoueurIds), 1);
+            AttribuerButs(_buts, s2MT1, eq2.Id, _db.GetPoursuiveurs(eq2.JoueurIds), 1);
+            AttribuerButs(_buts, s1MT2, eq1.Id, _db.GetPoursuiveurs(eq1.JoueurIds), 2);
+            AttribuerButs(_buts, s2MT2, eq2.Id, _db.GetPoursuiveurs(eq2.JoueurIds), 2);
 
-            // ── Blessures ──
             var notifsBlessures = _db.GererBlessures(eq1.JoueurIds);
             notifsBlessures.AddRange(_db.GererBlessures(eq2.JoueurIds));
 
-            // ── Affichage résultats ──
             TbScoreFinal.Text = $"{_scoreFinal1}  —  {_scoreFinal2}";
             TbMT1.Text = $"1ère MT : {s1MT1} - {s2MT1}";
             TbMT2.Text = $"2ème MT : {s1MT2} - {s2MT2}";
@@ -112,12 +160,11 @@ namespace SportManager
                              : _scoreFinal2 > _scoreFinal1 ? eq2.Nom
                              : "Match nul";
             TbVainqueur.Text = vainqueur;
-
-            TbButeurs.Text = BuildButeursText(buts, eq1, eq2);
+            TbButeurs.Text   = BuildButeursText(_buts, eq1, eq2);
 
             if (notifsBlessures.Count > 0)
             {
-                TbBlessures.Text = string.Join("\n", notifsBlessures);
+                TbBlessures.Text              = string.Join("\n", notifsBlessures);
                 TbBlessures.Visibility        = Visibility.Visible;
                 LblBlessuresHeader.Visibility = Visibility.Visible;
             }
@@ -128,16 +175,16 @@ namespace SportManager
             }
 
             PanelResultats.Visibility = Visibility.Visible;
+            BtnSauver.IsEnabled = true;
             _matchSimule = true;
         }
 
-        // Simulation intelligente : meilleure équipe marque plus
         private int SimulerButs(int scoreEquipe, int scoreAdverse)
         {
-            double total  = scoreEquipe + scoreAdverse;
-            double ratio  = total > 0 ? scoreEquipe / total : 0.5;
-            int base1     = _rnd.Next(0, 6);
-            int buts      = (int)Math.Round(base1 * ratio * 2 + _rnd.Next(-1, 2));
+            double total = scoreEquipe + scoreAdverse;
+            double ratio = total > 0 ? scoreEquipe / total : 0.5;
+            int base1    = _rnd.Next(0, 6);
+            int buts     = (int)Math.Round(base1 * ratio * 2 + _rnd.Next(-1, 2));
             return Math.Max(0, Math.Min(10, buts));
         }
 
@@ -180,7 +227,7 @@ namespace SportManager
             return sb.ToString().TrimEnd();
         }
 
-        // ─────────────────────── SAUVEGARDE ─────────────────────────────
+        // ─────────────────── SAUVEGARDE SIMULATION ─────────────
 
         private void Sauver_Click(object s, RoutedEventArgs e)
         {
@@ -188,10 +235,12 @@ namespace SportManager
             try
             {
                 _db.SaveMatch(_idEq1, _idEq2, _scoreFinal1, _scoreFinal2);
-                MessageBox.Show("Match enregistré !", "Succès",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                _matchSimule = false;
+                _db.EnregistrerButs(_buts);
+                _matchSimule    = false;
                 BtnSauver.IsEnabled = false;
+                PrepareEvaluation();
+                MessageBox.Show("Match enregistré. Évaluez maintenant les joueurs.", "Succès",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -200,12 +249,99 @@ namespace SportManager
             }
         }
 
-        // ─────────────────────── HISTORIQUE ─────────────────────────────
+        // ─────────────────── SAISIE MANUELLE ───────────────────
+
+        private void SauverManuel_Click(object s, RoutedEventArgs e)
+        {
+            var eq1 = CbEq1.SelectedItem as Equipe;
+            var eq2 = CbEq2.SelectedItem as Equipe;
+            if (eq1 == null || eq2 == null) return;
+
+            if (!int.TryParse(TbScoreManuel1.Text.Trim(), out int s1) || s1 < 0 ||
+                !int.TryParse(TbScoreManuel2.Text.Trim(), out int s2) || s2 < 0)
+            {
+                MessageBox.Show("Les scores doivent être des nombres entiers positifs.", "Erreur",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                _idEq1 = eq1.Id; _idEq2 = eq2.Id;
+                _scoreFinal1 = s1; _scoreFinal2 = s2;
+
+                _db.SaveMatch(_idEq1, _idEq2, _scoreFinal1, _scoreFinal2);
+
+                var notifs = _db.GererBlessures(eq1.JoueurIds);
+                notifs.AddRange(_db.GererBlessures(eq2.JoueurIds));
+
+                string notifTxt = notifs.Count > 0
+                    ? "\n\nBlessures : " + string.Join(", ", notifs)
+                    : "";
+
+                PrepareEvaluation();
+                MessageBox.Show(
+                    $"Match enregistré ({eq1.Nom} {s1} — {s2} {eq2.Nom}).{notifTxt}\n\nÉvaluez maintenant les joueurs.",
+                    "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur : {ex.Message}", "Erreur",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // ─────────────────── EVALUATION ────────────────────────
+
+        private void PrepareEvaluation()
+        {
+            var eq1 = CbEq1.SelectedItem as Equipe;
+            var eq2 = CbEq2.SelectedItem as Equipe;
+            if (eq1 == null || eq2 == null) return;
+
+            _evalJoueurs = eq1.Joueurs
+                .Select(j => new EvalJoueur { Id = j.Id, Nom = j.Nom, NomEquipe = eq1.Nom, Note = "Bon" })
+                .Concat(eq2.Joueurs
+                    .Select(j => new EvalJoueur { Id = j.Id, Nom = j.Nom, NomEquipe = eq2.Nom, Note = "Bon" }))
+                .ToList();
+
+            GridEval.ItemsSource       = _evalJoueurs;
+            PanelEvaluation.Visibility = Visibility.Visible;
+        }
+
+        private void ValiderEval_Click(object s, RoutedEventArgs e)
+        {
+            GridEval.CommitEdit(DataGridEditingUnit.Row, true);
+            try
+            {
+                foreach (var eval in _evalJoueurs)
+                {
+                    int delta = eval.Note switch
+                    {
+                        "Excellent"   => +5,
+                        "Insuffisant" => -5,
+                        _             =>  0,
+                    };
+                    _db.EvaluerJoueur(eval.Id, delta);
+                }
+                PanelEvaluation.Visibility = Visibility.Collapsed;
+                TbScoreManuel1.Text = TbScoreManuel2.Text = "";
+                MessageBox.Show("Évaluation enregistrée. Les compétences des joueurs ont été mises à jour.", "Succès",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'évaluation : {ex.Message}", "Erreur",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // ─────────────────── HISTORIQUE ────────────────────────
 
         private void HistoriqueTab_GotFocus(object s, RoutedEventArgs e)
         {
             try { GridHistorique.ItemsSource = _db.GetAllMatchs(); }
-            catch { /* Silencieux au chargement initial */ }
+            catch { }
         }
 
         private void ActualiserHisto_Click(object s, RoutedEventArgs e)

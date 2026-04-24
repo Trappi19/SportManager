@@ -45,7 +45,7 @@ namespace SportManager
                     Affectation  = ((System.Windows.Controls.ComboBoxItem)CbPoste.SelectedItem).Content.ToString()!,
                     ScoreDefense = (int)SlDef.Value,
                     ScoreAttaque = (int)SlAtt.Value,
-                    ScoreGoal    = (int)SlGoal.Value,
+                    ScoreVitesse    = (int)SlGoal.Value,
                     ScoreGeneral = Joueur.CalculerScoreGeneral((int)SlDef.Value, (int)SlAtt.Value, (int)SlGoal.Value),
                 };
                 _db.CreateJoueur(j);

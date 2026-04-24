@@ -9,6 +9,7 @@ namespace SportManager
         public MainWindow()
         {
             InitializeComponent();
+            try { _db.MigrateToV2(); } catch { }
             RefreshStats();
             LoadLastMatch();
         }
@@ -60,24 +61,8 @@ namespace SportManager
             LoadLastMatch();
         }
 
-        // Mini-cartes panneau droit
-        private void OpenJoueurs_Click2(object sender, MouseButtonEventArgs e)
-        {
-            new JoueursWindow().ShowDialog();
-            RefreshStats();
-        }
+        private void Quitter_Click(object sender, RoutedEventArgs e)
+            => Application.Current.Shutdown();
 
-        private void OpenEquipes_Click2(object sender, MouseButtonEventArgs e)
-        {
-            new EquipesWindow().ShowDialog();
-            RefreshStats();
-        }
-
-        private void OpenMatch_Click2(object sender, MouseButtonEventArgs e)
-        {
-            new MatchWindow().ShowDialog();
-            RefreshStats();
-            LoadLastMatch();
-        }
     }
 }

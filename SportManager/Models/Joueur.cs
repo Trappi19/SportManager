@@ -21,6 +21,8 @@ namespace SportManager.Models
 
         public string DisplayLabel => $"{Nom} (#{Id})";
 
+        public override string ToString() => DisplayLabel;
+
         // endurance a un défaut de 50 pour la compatibilité avec l'ancien code à 3 params
         public static int CalculerScoreGeneral(int defense, int attaque, int vitesse, int endurance = 50)
             => (defense + attaque + vitesse + endurance) / 4;

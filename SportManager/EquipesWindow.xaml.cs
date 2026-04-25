@@ -17,7 +17,7 @@ namespace SportManager
         public EquipesWindow()
         {
             InitializeComponent();
-            Load();
+            IsVisibleChanged += (_, e) => { if ((bool)e.NewValue) Load(); };
         }
 
         private void Load()

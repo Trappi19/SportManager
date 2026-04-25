@@ -288,8 +288,7 @@
                                                 <DataTemplate>
                                                     <ComboBox ItemsSource="{StaticResource Notes}"
                                                               SelectedItem="{Binding Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                              Background="#150D35" Foreground="White"
-                                                              BorderBrush="#2A1C5E" Padding="8,4"/>
+                                                              Style="{StaticResource ModernComboBox}"/>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>

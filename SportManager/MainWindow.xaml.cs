@@ -6,6 +6,11 @@ namespace SportManager
     {
         private readonly DatabaseService _db = new();
 
+        // Instances conservées pour préserver l'état entre navigations
+        private JoueursWindow? _joueursCtrl;
+        private EquipesWindow? _equipesCtrl;
+        private MatchWindow?   _matchCtrl;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -53,23 +58,32 @@ namespace SportManager
         // Boutons menu gauche
         private void OpenJoueurs_Click(object sender, RoutedEventArgs e)
         {
-            var ctrl = new JoueursWindow();
-            ctrl.Retour += (_, _) => FermerSection();
-            OuvrirSection(ctrl);
+            if (_joueursCtrl == null)
+            {
+                _joueursCtrl = new JoueursWindow();
+                _joueursCtrl.Retour += (_, _) => FermerSection();
+            }
+            OuvrirSection(_joueursCtrl);
         }
 
         private void OpenEquipes_Click(object sender, RoutedEventArgs e)
         {
-            var ctrl = new EquipesWindow();
-            ctrl.Retour += (_, _) => FermerSection();
-            OuvrirSection(ctrl);
+            if (_equipesCtrl == null)
+            {
+                _equipesCtrl = new EquipesWindow();
+                _equipesCtrl.Retour += (_, _) => FermerSection();
+            }
+            OuvrirSection(_equipesCtrl);
         }
 
         private void OpenMatch_Click(object sender, RoutedEventArgs e)
         {
-            var ctrl = new MatchWindow();
-            ctrl.Retour += (_, _) => FermerSection();
-            OuvrirSection(ctrl);
+            if (_matchCtrl == null)
+            {
+                _matchCtrl = new MatchWindow();
+                _matchCtrl.Retour += (_, _) => FermerSection();
+            }
+            OuvrirSection(_matchCtrl);
         }
 
         private void OuvrirSection(UserControl ctrl)
@@ -81,7 +95,6 @@ namespace SportManager
 
         private void FermerSection()
         {
-            PanelContenu.Content = null;
             PanelContenu.Visibility = Visibility.Collapsed;
             PanelAccueil.Visibility = Visibility.Visible;
             RefreshStats();

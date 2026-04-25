@@ -85,24 +85,40 @@ namespace SportManager
             AfficherInfoEquipe(eq2, PanelEq2, TbEq2Score, GridEq2);
 
             bool ready = eq1 != null && eq2 != null && eq1.Id != eq2.Id;
-            BtnSimuler.IsEnabled = ready && !_modeManuel;
 
+            // Vérification des joueurs en commun
+            bool conflit = false;
             if (ready)
             {
-                AfficherProbabilites(eq1!, eq2!);
-            }
-            else
-            {
-                PanelProba.Visibility = Visibility.Collapsed;
+                var ids1 = eq1!.JoueurIds.Where(id => id != 0).ToHashSet();
+                var communs = eq2!.JoueurIds.Where(id => id != 0 && ids1.Contains(id)).ToList();
+                if (communs.Count > 0)
+                {
+                    var noms = communs.Select(id => _db.GetNomJoueur(id));
+                    TbAvertissement.Text = $"Joueur(s) dans les deux équipes : {string.Join(", ", noms)} — match impossible.";
+                    PanelAvertissement.Visibility = Visibility.Visible;
+                    conflit = true;
+                }
             }
 
-            if (_modeManuel && ready)
+            if (!conflit)
+                PanelAvertissement.Visibility = Visibility.Collapsed;
+
+            bool peutJouer = ready && !conflit;
+            BtnSimuler.IsEnabled = peutJouer && !_modeManuel;
+
+            if (peutJouer)
+                AfficherProbabilites(eq1!, eq2!);
+            else
+                PanelProba.Visibility = Visibility.Collapsed;
+
+            if (_modeManuel && peutJouer)
             {
                 TbManuelNom1.Text = eq1!.Nom;
                 TbManuelNom2.Text = eq2!.Nom;
                 PanelSaisieManuelle.Visibility = Visibility.Visible;
             }
-            else if (!ready)
+            else if (!peutJouer)
             {
                 PanelSaisieManuelle.Visibility = Visibility.Collapsed;
             }

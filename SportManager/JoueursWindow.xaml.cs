@@ -169,6 +169,14 @@ namespace SportManager
             int vit = (int)SlVitesse.Value, end = (int)SlEndurance.Value;
             int gen = Joueur.CalculerScoreGeneral(def, att, vit, end);
 
+            if (!Joueur.QualifiePour(poste, def, att, vit, end))
+            {
+                MessageBox.Show(
+                    $"Ce joueur ne remplit pas les exigences du poste {poste}.\n\n{Joueur.ExigencesPoste(poste)}",
+                    "Stats insuffisantes", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             try
             {
                 if (_modeCreation)

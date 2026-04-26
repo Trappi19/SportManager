@@ -1,51 +1,51 @@
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.csproj.AssemblyReference.cache
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\App.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\CreatePlayerDialog.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\CreateTeamDialog.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\EditPlayerDialog.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\EditTeamDialog.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\EquipesWindow.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\JoueursWindow.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\MainWindow.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\MatchWindow.baml
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\App.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\CreatePlayerDialog.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\CreateTeamDialog.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\EditPlayerDialog.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\EditTeamDialog.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\EquipesWindow.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\JoueursWindow.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\MainWindow.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager\MatchWindow.g.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager_MarkupCompile.cache
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.g.resources
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.AssemblyInfoInputs.cache
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.AssemblyInfo.cs
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.csproj.CoreCompileInputs.cache
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.sourcelink.json
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\SportManager.exe
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\SportManager.deps.json
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\SportManager.runtimeconfig.json
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\SportManager.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\SportManager.pdb
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\BouncyCastle.Cryptography.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\Google.Protobuf.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\K4os.Compression.LZ4.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\K4os.Compression.LZ4.Streams.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\K4os.Hash.xxHash.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\MySql.Data.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\ZstdSharp.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\comerr64.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\gssapi64.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\k5sprt64.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\krb5_64.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\krbcc64.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportMan.2E040279.Up2Date
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\refint\SportManager.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.pdb
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\SportManager.genruntimeconfig.cache
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\obj\Debug\net10.0-windows\ref\SportManager.dll
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\Sportmanager\obj\Debug\net10.0-windows\SportManager_MarkupCompile.lref
-C:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\bin\Debug\net10.0-windows\Dapper.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\SportManager.exe
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\SportManager.deps.json
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\SportManager.runtimeconfig.json
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\SportManager.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\SportManager.pdb
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\BouncyCastle.Cryptography.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\Dapper.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\Google.Protobuf.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\K4os.Compression.LZ4.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\K4os.Compression.LZ4.Streams.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\K4os.Hash.xxHash.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\MySql.Data.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\ZstdSharp.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\comerr64.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\gssapi64.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\k5sprt64.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\krb5_64.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\bin\Debug\net10.0-windows\runtimes\win-x64\native\krbcc64.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.csproj.AssemblyReference.cache
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\MainWindow.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Dialogs\CreatePlayerDialog.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Dialogs\CreateTeamDialog.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Dialogs\EditPlayerDialog.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Dialogs\EditTeamDialog.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Windows\EquipesWindow.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Windows\JoueursWindow.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\App.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\MainWindow.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Dialogs\CreatePlayerDialog.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Dialogs\CreateTeamDialog.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Dialogs\EditPlayerDialog.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Dialogs\EditTeamDialog.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Windows\EquipesWindow.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Windows\JoueursWindow.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Windows\MatchWindow.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\App.g.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager_MarkupCompile.cache
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager_MarkupCompile.lref
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager\Views\Windows\MatchWindow.baml
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.g.resources
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.GeneratedMSBuildEditorConfig.editorconfig
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.AssemblyInfoInputs.cache
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.AssemblyInfo.cs
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.csproj.CoreCompileInputs.cache
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.sourcelink.json
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportMan.2E040279.Up2Date
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\refint\SportManager.dll
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.pdb
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\SportManager.genruntimeconfig.cache
+C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\ref\SportManager.dll

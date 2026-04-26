@@ -1,4 +1,5 @@
 using SportManager.Services;
+using SportManager.Views.Windows;
 
 namespace SportManager
 {
@@ -23,7 +24,7 @@ namespace SportManager
 
         private void LoadBackground()
         {
-            const string path = @"c:\Users\Utilisateur\Desktop\CESI 2025-2026\SportManager\SportManager\Resources\background.png";
+            const string path = @"C:\Mes données personnelles\Mes documents persos\CESI\SportManager\SportManager\Resources\background.png";
             var bi = new System.Windows.Media.Imaging.BitmapImage(new Uri(path));
             ImgFond.Source = bi;
         }

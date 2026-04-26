@@ -14,6 +14,8 @@
   <ItemGroup>
     <Compile Remove="Scripts\**\*.cs" />
     <None    Include="Scripts\**\*.cs" />
+    <Compile Remove="Legacy\**\*.cs" />
+    <None    Include="Legacy\**\*.cs" />
     <!-- Exclure les obj/ et bin/ du sous-projet pour éviter les doublons -->
     <Compile Remove="SportManager\obj\**" />
     <Compile Remove="SportManager\bin\**" />

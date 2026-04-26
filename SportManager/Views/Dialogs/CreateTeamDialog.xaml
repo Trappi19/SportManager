@@ -1,0 +1,79 @@
+<Window x:Class="SportManager.Views.Dialogs.CreateTeamDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Nouvelle Équipe" Height="600" Width="500"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}"
+        ResizeMode="NoResize">
+
+    <Grid Margin="28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Créer une équipe"
+                   FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,0,0,20"/>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Nom équipe -->
+                <TextBlock Text="NOM DE L'ÉQUIPE" Style="{StaticResource FormLabel}"/>
+                <TextBox x:Name="TbNom" Style="{StaticResource ModernTextBox}" Margin="0,0,0,20"/>
+
+                <!-- Info composition -->
+                <Border Background="{StaticResource CardBrush}" CornerRadius="6"
+                        Padding="12,8" Margin="0,0,0,16">
+                    <TextBlock Foreground="{StaticResource MutedBrush}" FontSize="12"
+                               Text="Composition : 3 Poursuiveurs · 2 Batteurs · 1 Gardien · 1 Attrapeur"/>
+                </Border>
+
+                <!-- Poursuiveurs -->
+                <TextBlock Text="POURSUIVEURS (×3)" Style="{StaticResource FormLabel}"/>
+                <ComboBox x:Name="CbP1" Style="{StaticResource ModernComboBox}" Margin="0,0,0,8"
+                          DisplayMemberPath="DisplayLabel"/>
+                <ComboBox x:Name="CbP2" Style="{StaticResource ModernComboBox}" Margin="0,0,0,8"
+                          DisplayMemberPath="DisplayLabel"/>
+                <ComboBox x:Name="CbP3" Style="{StaticResource ModernComboBox}" Margin="0,0,0,16"
+                          DisplayMemberPath="DisplayLabel"/>
+
+                <!-- Batteurs -->
+                <TextBlock Text="BATTEURS (×2)" Style="{StaticResource FormLabel}"/>
+                <ComboBox x:Name="CbB1" Style="{StaticResource ModernComboBox}" Margin="0,0,0,8"
+                          DisplayMemberPath="DisplayLabel"/>
+                <ComboBox x:Name="CbB2" Style="{StaticResource ModernComboBox}" Margin="0,0,0,16"
+                          DisplayMemberPath="DisplayLabel"/>
+
+                <!-- Gardien -->
+                <TextBlock Text="GARDIEN (×1)" Style="{StaticResource FormLabel}"/>
+                <ComboBox x:Name="CbG" Style="{StaticResource ModernComboBox}" Margin="0,0,0,16"
+                          DisplayMemberPath="DisplayLabel"/>
+
+                <!-- Attrapeur -->
+                <TextBlock Text="ATTRAPEUR (×1)" Style="{StaticResource FormLabel}"/>
+                <ComboBox x:Name="CbA" Style="{StaticResource ModernComboBox}" Margin="0,0,0,16"
+                          DisplayMemberPath="DisplayLabel"/>
+
+                <!-- Score calculé -->
+                <Border Background="{StaticResource CardBrush}" CornerRadius="6" Padding="12,8">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Score général estimé : "
+                                   Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                        <TextBlock x:Name="LblScore" Text="—"
+                                   Foreground="{StaticResource SuccessBrush}"
+                                   FontWeight="Bold" FontSize="13"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right"
+                    Margin="0,20,0,0">
+            <Button Content="Annuler"    Style="{StaticResource BtnSecondary}"
+                    Margin="0,0,10,0"   Click="Annuler_Click"/>
+            <Button Content="Créer"  Style="{StaticResource BtnSuccess}"
+                    Click="Creer_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

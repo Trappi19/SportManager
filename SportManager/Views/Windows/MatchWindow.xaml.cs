@@ -10,16 +10,19 @@ namespace SportManager.Views.Windows
 {
     public partial class MatchWindow : UserControl
     {
+        /// <summary>Déclenché quand l'utilisateur clique sur "Retour".</summary>
         public event EventHandler? Retour;
 
         private readonly DatabaseService _db  = new();
-        private readonly Random          _rnd = new();
+        private readonly Random          _rnd = new();  // instance unique pour la simulation
 
-        private int  _idEq1, _idEq2, _scoreFinal1, _scoreFinal2;
-        private bool _matchSimule;
-        private bool _modeManuel;
-        private List<ButInfo>    _buts       = new();
-        private List<EvalJoueur> _evalJoueurs = new();
+        // ── État du match en cours ────────────────────────────
+        private int  _idEq1, _idEq2;                    // IDs des équipes sélectionnées
+        private int  _scoreFinal1, _scoreFinal2;         // scores calculés après simulation
+        private bool _matchSimule;                       // true = simulation effectuée, en attente de sauvegarde
+        private bool _modeManuel;                        // true = saisie manuelle du score
+        private List<ButInfo>    _buts        = new();  // liste des buts pour la simulation
+        private List<EvalJoueur> _evalJoueurs = new();  // joueurs à évaluer après le match
 
         public MatchWindow()
         {
@@ -27,6 +30,7 @@ namespace SportManager.Views.Windows
             LoadEquipes();
         }
 
+        /// <summary>Charge la liste des équipes dans les deux ComboBox de sélection.</summary>
         private void LoadEquipes()
         {
             try
@@ -164,14 +168,20 @@ namespace SportManager.Views.Windows
             }
         }
 
+        /// <summary>
+        /// Cœur de la simulation : calcule les scores par mi-temps, attribue les buts aux poursuiveurs
+        /// et déclenche la gestion des blessures post-match.
+        /// </summary>
         private void SimulerInternal()
         {
             var eq1 = (Equipe)CbEq1.SelectedItem;
             var eq2 = (Equipe)CbEq2.SelectedItem;
 
+            // Scores effectifs tenant compte des blessures et pondération par poste
             int score1 = _db.CalcScoreAvecBlessures(eq1.JoueurIds);
             int score2 = _db.CalcScoreAvecBlessures(eq2.JoueurIds);
 
+            // Simulation indépendante pour chaque mi-temps
             int s1MT1 = SimulerButs(score1, score2);
             int s2MT1 = SimulerButs(score2, score1);
             int s1MT2 = SimulerButs(score1, score2);
@@ -182,12 +192,14 @@ namespace SportManager.Views.Windows
             _idEq1 = eq1.Id;
             _idEq2 = eq2.Id;
 
+            // Attribue chaque but à un Poursuiveur aléatoire de l'équipe concernée
             _buts = new List<ButInfo>();
             AttribuerButs(_buts, s1MT1, eq1.Id, _db.GetPoursuiveurs(eq1.JoueurIds), 1);
             AttribuerButs(_buts, s2MT1, eq2.Id, _db.GetPoursuiveurs(eq2.JoueurIds), 1);
             AttribuerButs(_buts, s1MT2, eq1.Id, _db.GetPoursuiveurs(eq1.JoueurIds), 2);
             AttribuerButs(_buts, s2MT2, eq2.Id, _db.GetPoursuiveurs(eq2.JoueurIds), 2);
 
+            // Gestion des blessures : décrémente les compteurs et inflige éventuellement de nouvelles blessures
             var notifsBlessures = _db.GererBlessures(eq1.JoueurIds);
             notifsBlessures.AddRange(_db.GererBlessures(eq2.JoueurIds));
 
@@ -218,22 +230,30 @@ namespace SportManager.Views.Windows
             _matchSimule = true;
         }
 
+        /// <summary>
+        /// Calcule le nombre de buts marqués par une équipe sur une mi-temps.
+        /// Formule : base aléatoire (0-5) × ratio de force × 2 + bruit (-1..+1), clampé 0-10.
+        /// </summary>
         private int SimulerButs(int scoreEquipe, int scoreAdverse)
         {
             double total = scoreEquipe + scoreAdverse;
-            double ratio = total > 0 ? scoreEquipe / total : 0.5;
-            int base1    = _rnd.Next(0, 6);
+            double ratio = total > 0 ? scoreEquipe / total : 0.5;  // part relative de l'équipe
+            int base1    = _rnd.Next(0, 6);                         // base aléatoire pour l'imprévisibilité
             int buts     = (int)Math.Round(base1 * ratio * 2 + _rnd.Next(-1, 2));
-            return Math.Max(0, Math.Min(10, buts));
+            return Math.Max(0, Math.Min(10, buts));                 // borne entre 0 et 10 buts
         }
 
+        /// <summary>
+        /// Ajoute nbButs entrées dans la liste buts, chacune attribuée à un Poursuiveur aléatoire.
+        /// Si l'équipe n'a pas de poursuiveur disponible, les buts ne sont pas attribués.
+        /// </summary>
         private void AttribuerButs(List<ButInfo> buts, int nbButs, int idEquipe,
                                    List<int> poursuiveurs, int miTemps)
         {
             if (nbButs == 0 || poursuiveurs.Count == 0) return;
             for (int i = 0; i < nbButs; i++)
             {
-                int idJ = poursuiveurs[_rnd.Next(poursuiveurs.Count)];
+                int idJ = poursuiveurs[_rnd.Next(poursuiveurs.Count)];  // tire un poursuiveur au hasard
                 buts.Add(new ButInfo
                 {
                     IdJoueur   = idJ,
@@ -333,12 +353,16 @@ namespace SportManager.Views.Windows
 
         // ─────────────────── EVALUATION ────────────────────────
 
+        /// <summary>
+        /// Prépare le DataGrid d'évaluation avec tous les joueurs des deux équipes, note par défaut "Bon".
+        /// </summary>
         private void PrepareEvaluation()
         {
             var eq1 = CbEq1.SelectedItem as Equipe;
             var eq2 = CbEq2.SelectedItem as Equipe;
             if (eq1 == null || eq2 == null) return;
 
+            // Concatène les joueurs des deux équipes en objets EvalJoueur (binding DataGrid)
             _evalJoueurs = eq1.Joueurs
                 .Select(j => new EvalJoueur { Id = j.Id, Nom = j.Nom, NomEquipe = eq1.Nom, Note = "Bon" })
                 .Concat(eq2.Joueurs
@@ -349,8 +373,13 @@ namespace SportManager.Views.Windows
             PanelEvaluation.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// Applique les deltas de stats selon les notes attribuées :
+        /// Excellent +5, Insuffisant -5, Bon = aucun changement.
+        /// </summary>
         private void ValiderEval_Click(object s, RoutedEventArgs e)
         {
+            // Force la validation de la cellule en cours d'édition avant de lire les valeurs
             GridEval.CommitEdit(DataGridEditingUnit.Row, true);
             try
             {
@@ -360,7 +389,7 @@ namespace SportManager.Views.Windows
                     {
                         "Excellent"   => +5,
                         "Insuffisant" => -5,
-                        _             =>  0,
+                        _             =>  0,   // "Bon" = neutre
                     };
                     _db.EvaluerJoueur(eval.Id, delta);
                 }

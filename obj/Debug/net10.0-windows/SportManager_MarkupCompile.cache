@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Mes données personnelles\Mes documents persos\CESI\SportManager\obj\Debug\net10.0-windows\
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\obj\Debug\net10.0-windows\
 SportManager
 none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Mes données personnelles\Mes documents persos\CESI\SportManager\SportManager\App.xaml
+C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\SportManager\App.xaml
 8-1793483933
 
 19501594674
-214-659739575
+214-446226105
 SportManager\MainWindow.xaml;SportManager\Views\Dialogs\CreatePlayerDialog.xaml;SportManager\Views\Dialogs\CreateTeamDialog.xaml;SportManager\Views\Dialogs\EditPlayerDialog.xaml;SportManager\Views\Dialogs\EditTeamDialog.xaml;SportManager\Views\Windows\EquipesWindow.xaml;SportManager\Views\Windows\JoueursWindow.xaml;SportManager\Views\Windows\MatchWindow.xaml;
 
 True

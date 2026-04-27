@@ -7,11 +7,17 @@ using SportManager.Models;
 
 namespace SportManager.Services
 {
+    /// <summary>
+    /// Service d'accès aux données MySQL via Dapper.
+    /// Centralise toutes les requêtes SQL de l'application WPF.
+    /// </summary>
     public class DatabaseService
     {
+        // Chaîne de connexion à la BDD locale
         private const string ConnStr =
             "Server=localhost;Database=sportmanager;Uid=root;Pwd=rootroot;";
 
+        /// <summary>Ouvre une nouvelle connexion MySQL. À utiliser dans un bloc using.</summary>
         private MySqlConnection Open()
         {
             var c = new MySqlConnection(ConnStr);
@@ -21,11 +27,17 @@ namespace SportManager.Services
 
         // ─────────────────────────── MIGRATIONS ─────────────────────────
 
+        /// <summary>
+        /// Génère des statistiques aléatoires cohérentes par poste pour tous les joueurs.
+        /// Exécutée une seule fois grâce à la table `migrations`.
+        /// </summary>
         public void MigrateRandomStats()
         {
             using var conn = Open();
+            // Crée la table de suivi des migrations si elle n'existe pas encore
             conn.Execute("CREATE TABLE IF NOT EXISTS migrations (nom VARCHAR(100) PRIMARY KEY);");
 
+            // Si la migration a déjà été appliquée, on ne fait rien
             if (conn.ExecuteScalar<int>("SELECT COUNT(*) FROM migrations WHERE nom='random_stats_v1';") > 0)
                 return;
 
@@ -67,9 +79,14 @@ namespace SportManager.Services
             conn.Execute("INSERT INTO migrations (nom) VALUES ('random_stats_v1');");
         }
 
+        /// <summary>
+        /// Migration v2 : ajoute la colonne score_endurance si absente et remet les stats à l'échelle 0-100.
+        /// Anciennement les scores étaient sur 0-10 ; cette migration les multiplie par 10.
+        /// </summary>
         public void MigrateToV2()
         {
             using var conn = Open();
+            // Vérifie si la colonne score_endurance existe déjà dans information_schema
             bool exists = conn.ExecuteScalar<int>(@"
                 SELECT COUNT(*) FROM information_schema.COLUMNS
                 WHERE TABLE_SCHEMA = DATABASE()
@@ -78,7 +95,9 @@ namespace SportManager.Services
 
             if (!exists)
             {
+                // Ajoute la colonne manquante avec une valeur par défaut neutre
                 conn.Execute("ALTER TABLE joueurs ADD COLUMN score_endurance INT NOT NULL DEFAULT 50;");
+                // Remet tous les scores à l'échelle ×10 pour passer de 0-10 à 0-100
                 conn.Execute(@"UPDATE joueurs SET
                     score_defense   = score_defense  * 10,
                     score_attaque   = score_attaque  * 10,
@@ -90,7 +109,9 @@ namespace SportManager.Services
 
         // ─────────────────────────── JOUEURS ────────────────────────────
 
-        // Requête de base réutilisée partout — les alias correspondent aux propriétés de Joueur
+        // Requête SELECT réutilisée par GetAllJoueurs, GetJoueursByAffectation, GetJoueurById.
+        // Les alias SQL (AS ...) correspondent exactement aux noms des propriétés C# pour que Dapper
+        // fasse le mapping automatiquement sans configuration supplémentaire.
         private const string JoueurSql = @"
             SELECT j.id_joueur                  AS Id,
                    j.nom_joueur                 AS Nom,
@@ -168,11 +189,16 @@ namespace SportManager.Services
                 new { buts, idJoueur });
         }
 
+        /// <summary>
+        /// Applique un delta (+5 Excellent / -5 Insuffisant) sur toutes les stats d'un joueur.
+        /// Les stats sont clampées entre 0 et 100 pour éviter les dépassements.
+        /// </summary>
         public void EvaluerJoueur(int idJoueur, int delta)
         {
-            if (delta == 0) return;
+            if (delta == 0) return;  // note "Bon" → aucun changement
             using var conn = Open();
 
+            // Récupère les stats actuelles pour calculer les nouvelles valeurs
             var stats = conn.QueryFirstOrDefault(
                 "SELECT score_defense AS D, score_attaque AS A, score_vitesse AS V, score_endurance AS E FROM joueurs WHERE id_joueur = @idJoueur;",
                 new { idJoueur });
@@ -195,10 +221,15 @@ namespace SportManager.Services
                 new { def, att, vit, end, gen, idJoueur });
         }
 
+        /// <summary>
+        /// Incrémente score_goal pour chaque joueur buteur.
+        /// Les buts sont regroupés par joueur pour faire une seule UPDATE par joueur.
+        /// </summary>
         public void EnregistrerButs(List<ButInfo> buts)
         {
             if (buts.Count == 0) return;
             using var conn = Open();
+            // GroupBy IdJoueur → une seule requête UPDATE par joueur au lieu de N requêtes
             foreach (var groupe in buts.GroupBy(b => b.IdJoueur))
             {
                 conn.Execute(
@@ -343,7 +374,12 @@ namespace SportManager.Services
             };
         }
 
-        // Score pondéré par poste (0-100) avec malus blessure — une seule requête IN pour tous les joueurs
+        /// <summary>
+        /// Calcule le score effectif de l'équipe en tenant compte des blessures.
+        /// Chaque joueur est pondéré selon son poste (ex: Gardien → 50% défense).
+        /// Le malus de blessure est ajouté directement au score pondéré.
+        /// Une seule requête SQL IN() récupère tous les joueurs d'un coup.
+        /// </summary>
         public int CalcScoreAvecBlessures(int[] ids)
         {
             var validIds = ids.Where(id => id != 0).ToList();
@@ -406,15 +442,23 @@ namespace SportManager.Services
                    ?? $"Joueur {id}";
         }
 
+        /// <summary>
+        /// Gère les blessures après un match pour un groupe de joueurs :
+        /// 1. Décrémente le compteur de matchs restants des joueurs déjà blessés.
+        /// 2. Guérit les joueurs dont le compteur atteint 0.
+        /// 3. Inflige aléatoirement une nouvelle blessure (10% de chance par joueur).
+        /// Retourne les notifications de nouvelles blessures à afficher à l'utilisateur.
+        /// </summary>
         public List<string> GererBlessures(int[] ids)
         {
-            var notifs   = new List<string>();
+            var notifs    = new List<string>();
             var blessures = GetAllBlessures();
             var rnd       = new Random();
             var validIds  = ids.Where(id => id != 0).ToList();
             if (validIds.Count == 0) return notifs;
 
             using var conn = Open();
+            // Récupère l'état de blessure actuel de tous les joueurs de l'équipe en une seule requête
             var etats = conn.Query(@"
                 SELECT id_joueur AS Id, id_blessure AS IdBlessure, matchs_restants_blessure AS Restant
                 FROM joueurs WHERE id_joueur IN @validIds;",
@@ -426,18 +470,23 @@ namespace SportManager.Services
                 int idBlessure = etat.IdBlessure != null ? (int)etat.IdBlessure : 0;
                 int restant    = etat.Restant    != null ? (int)etat.Restant    : 0;
 
+                // Si le joueur est déjà blessé, on décrémente son compteur
                 if (idBlessure != 0)
                 {
                     restant--;
                     if (restant <= 0)
+                        // Guérison : efface la blessure
                         conn.Execute("UPDATE joueurs SET id_blessure=NULL, matchs_restants_blessure=0 WHERE id_joueur=@idJoueur;", new { idJoueur });
                     else
+                        // Toujours blessé : met à jour le compteur restant
                         conn.Execute("UPDATE joueurs SET matchs_restants_blessure=@restant WHERE id_joueur=@idJoueur;", new { restant, idJoueur });
                 }
 
+                // 10% de chance de contracter une nouvelle blessure à chaque match
                 if (blessures.Count > 0 && rnd.Next(100) < 10)
                 {
                     var b = blessures[rnd.Next(blessures.Count)];
+                    // Durée fixe de 3 matchs pour toute nouvelle blessure
                     conn.Execute("UPDATE joueurs SET id_blessure=@bId, matchs_restants_blessure=3 WHERE id_joueur=@idJoueur;",
                         new { bId = b.Id, idJoueur });
                     notifs.Add($"{GetNomJoueur(idJoueur)} → blessure : {b.Type}");
@@ -448,6 +497,11 @@ namespace SportManager.Services
 
         // ─────────────────────────── PRIVÉ ──────────────────────────────
 
+        /// <summary>
+        /// Calcule le score général moyen d'une équipe à partir des score_general des joueurs.
+        /// Utilisé à la création/modification d'une équipe pour stocker une valeur en BDD.
+        /// Contrairement à CalcScoreAvecBlessures, il ne tient pas compte des blessures ni de la pondération par poste.
+        /// </summary>
         private int CalcScoreEquipe(int[] ids)
         {
             var validIds = ids.Where(id => id != 0).ToList();

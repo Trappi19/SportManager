@@ -6,6 +6,7 @@
              Background="{StaticResource BackgroundBrush}">
 
     <UserControl.Resources>
+        <!-- Tableau statique des notes possible — utilisé comme ItemsSource de la ComboBox d'évaluation -->
         <x:Array x:Key="Notes" Type="sys:String">
             <sys:String>Excellent</sys:String>
             <sys:String>Bon</sys:String>
@@ -161,10 +162,11 @@
                                        TextWrapping="Wrap" HorizontalAlignment="Center"/>
                         </Border>
 
-                        <!-- ── Sélecteur de mode ── -->
+                        <!-- ── Sélecteur de mode : simulation auto OU saisie manuelle du score ── -->
                         <Border Background="{StaticResource CardBrush}" CornerRadius="6"
                                 Margin="0,16,0,0" Padding="10">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <!-- Actif par défaut (BtnPrimary), passe en BtnSecondary quand inactif -->
                                 <Button x:Name="BtnModeSimulation"
                                         Content="Simulation automatique"
                                         Style="{StaticResource BtnPrimary}"
@@ -271,7 +273,7 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- ── Evaluation des joueurs ── -->
+                        <!-- ── Evaluation des joueurs (affiché après sauvegarde du match) ── -->
                         <Border x:Name="PanelEvaluation"
                                 Background="{StaticResource CardBrush}"
                                 CornerRadius="8" Padding="20"
@@ -293,9 +295,11 @@
                                                             Width="*" IsReadOnly="True"/>
                                         <DataGridTextColumn Header="Equipe" Binding="{Binding NomEquipe}"
                                                             Width="160" IsReadOnly="True"/>
+                                        <!-- DataGridTemplateColumn utilisé car une colonne TextColumn ne supporte pas les ComboBox -->
                                         <DataGridTemplateColumn Header="Performance" Width="160">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
+                                                    <!-- TwoWay + UpdateSourceTrigger=PropertyChanged : la Note est mise à jour dès la sélection -->
                                                     <ComboBox ItemsSource="{StaticResource Notes}"
                                                               SelectedItem="{Binding Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                               Style="{StaticResource ModernComboBox}"/>

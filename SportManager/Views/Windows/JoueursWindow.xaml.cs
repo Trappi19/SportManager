@@ -7,19 +7,22 @@ namespace SportManager.Views.Windows
 {
     public partial class JoueursWindow : UserControl
     {
+        /// <summary>Déclenché quand l'utilisateur clique sur "Retour" → MainWindow revient à l'accueil.</summary>
         public event EventHandler? Retour;
 
         private readonly DatabaseService _db = new();
-        private List<Joueur> _all = new();
-        private bool _modeCreation;
-        private Joueur? _joueurEnEdition;
+        private List<Joueur> _all = new();   // cache local de tous les joueurs (pour le filtre côté client)
+        private bool _modeCreation;          // true = création, false = modification
+        private Joueur? _joueurEnEdition;    // référence au joueur en cours de modification
 
         public JoueursWindow()
         {
             InitializeComponent();
+            // Recharge les données chaque fois que le UserControl devient visible (retour depuis une autre section)
             IsVisibleChanged += (_, e) => { if ((bool)e.NewValue) Load(); };
         }
 
+        /// <summary>Charge tous les joueurs depuis la BDD et met à jour le DataGrid.</summary>
         private void Load()
         {
             try
@@ -34,6 +37,10 @@ namespace SportManager.Views.Windows
             }
         }
 
+        /// <summary>
+        /// Filtre _all selon le texte de SearchBox et rebind le DataGrid.
+        /// Le filtre s'applique sur le nom ET le poste (affectation).
+        /// </summary>
         private void Refresh()
         {
             string q = SearchBox.Text.Trim().ToLower();
@@ -44,8 +51,10 @@ namespace SportManager.Views.Windows
                     j.Affectation.ToLower().Contains(q)).ToList();
         }
 
+        // Raccourci pour obtenir le joueur sélectionné dans le DataGrid
         private Joueur? Selected => Grid.SelectedItem as Joueur;
 
+        /// <summary>Active/désactive les boutons Modifier et Supprimer selon la sélection.</summary>
         private void Grid_SelectionChanged(object s, SelectionChangedEventArgs e)
         {
             bool has = Selected != null;
@@ -53,10 +62,12 @@ namespace SportManager.Views.Windows
             BtnSupprimer.IsEnabled = has;
         }
 
+        // Déclenche un re-filtre à chaque frappe dans la barre de recherche
         private void SearchBox_TextChanged(object s, TextChangedEventArgs e) => Refresh();
 
-        // ── Panneau form ──────────────────────────────────────
+        // ── Panneau form (droite) ──────────────────────────────
 
+        /// <summary>Initialise le formulaire en mode création (champs vides).</summary>
         private void ShowFormCreate()
         {
             _modeCreation    = true;
@@ -65,11 +76,12 @@ namespace SportManager.Views.Windows
             TbNom.Text        = string.Empty;
             CbPoste.SelectedIndex = -1;
             SlDef.Value = SlAtt.Value = SlVitesse.Value = SlEndurance.Value = 0;
-            PanelButs.Visibility = Visibility.Collapsed;
+            PanelButs.Visibility = Visibility.Collapsed;  // le champ Buts n'est utile qu'en modification
             UpdateScoreLabel();
             FormPanel.Visibility = Visibility.Visible;
         }
 
+        /// <summary>Pré-remplit le formulaire avec les données du joueur à modifier.</summary>
         private void ShowFormEdit(Joueur j)
         {
             _modeCreation    = false;
@@ -82,6 +94,7 @@ namespace SportManager.Views.Windows
             SlEndurance.Value = j.ScoreEndurance;
             TbButs.Text       = j.ButsMarques.ToString();
             PanelButs.Visibility = Visibility.Visible;
+            // Sélectionne le bon poste dans le ComboBox en comparant le texte
             CbPoste.SelectedIndex = -1;
             foreach (ComboBoxItem item in CbPoste.Items)
                 if (item.Content.ToString() == j.Affectation)
@@ -90,23 +103,27 @@ namespace SportManager.Views.Windows
             FormPanel.Visibility = Visibility.Visible;
         }
 
+        /// <summary>Masque le panneau formulaire et réinitialise la référence d'édition.</summary>
         private void HideForm()
         {
             FormPanel.Visibility = Visibility.Collapsed;
             _joueurEnEdition = null;
         }
 
+        // Appelé à chaque déplacement d'un slider → met à jour les labels de valeur et le badge de poste
         private void Score_Changed(object s, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdateScoreLabel();
             UpdatePosteBadge();
         }
 
+        // Appelé quand le poste change → recalcule le badge d'exigences
         private void CbPoste_Changed(object s, SelectionChangedEventArgs e) => UpdatePosteBadge();
 
+        /// <summary>Met à jour les TextBlock de valeur (LblDef, LblAtt, etc.) et le score général.</summary>
         private void UpdateScoreLabel()
         {
-            if (LblDef == null) return;
+            if (LblDef == null) return;  // garde contre les appels avant InitializeComponent
             LblDef.Text      = ((int)SlDef.Value).ToString();
             LblAtt.Text      = ((int)SlAtt.Value).ToString();
             LblVitesse.Text  = ((int)SlVitesse.Value).ToString();
@@ -116,16 +133,20 @@ namespace SportManager.Views.Windows
             LblGen.Text = $"{gen} / 100";
         }
 
+        /// <summary>
+        /// Affiche les exigences du poste sélectionné et colore le badge en vert (OK) ou rouge (insuffisant).
+        /// </summary>
         private void UpdatePosteBadge()
         {
             if (TbExigences == null || CbPoste?.SelectedItem == null) return;
-            string poste = ((ComboBoxItem)CbPoste.SelectedItem).Content.ToString()!;
+            string poste    = ((ComboBoxItem)CbPoste.SelectedItem).Content.ToString()!;
             string exigences = Joueur.ExigencesPoste(poste);
             TbExigences.Text = exigences;
 
             bool ok = Joueur.QualifiePour(poste,
                 (int)SlDef.Value, (int)SlAtt.Value,
                 (int)SlVitesse.Value, (int)SlEndurance.Value);
+            // Vert si les stats sont suffisantes, rouge sinon
             TbExigences.Foreground = ok
                 ? new System.Windows.Media.SolidColorBrush(
                     System.Windows.Media.Color.FromRgb(0x2E, 0xCC, 0x71))
@@ -157,8 +178,13 @@ namespace SportManager.Views.Windows
 
         // ── Boutons panneau form ──────────────────────────────
 
+        /// <summary>
+        /// Valide et enregistre le joueur (création ou modification).
+        /// Bloque si le nom est vide, si aucun poste n'est choisi, ou si les stats sont insuffisantes.
+        /// </summary>
         private void Enregistrer_Click(object s, RoutedEventArgs e)
         {
+            // Validations de base
             if (string.IsNullOrWhiteSpace(TbNom.Text))
             { MessageBox.Show("Le nom est obligatoire.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
             if (CbPoste.SelectedItem == null)
@@ -169,6 +195,7 @@ namespace SportManager.Views.Windows
             int vit = (int)SlVitesse.Value, end = (int)SlEndurance.Value;
             int gen = Joueur.CalculerScoreGeneral(def, att, vit, end);
 
+            // Vérifie que les stats satisfont les exigences du poste
             if (!Joueur.QualifiePour(poste, def, att, vit, end))
             {
                 MessageBox.Show(
@@ -190,6 +217,7 @@ namespace SportManager.Views.Windows
                 }
                 else if (_joueurEnEdition != null)
                 {
+                    // Met à jour l'objet en mémoire puis envoie l'UPDATE en BDD
                     _joueurEnEdition.Nom           = TbNom.Text.Trim();
                     _joueurEnEdition.Affectation   = poste;
                     _joueurEnEdition.ScoreDefense  = def;
@@ -198,6 +226,7 @@ namespace SportManager.Views.Windows
                     _joueurEnEdition.ScoreEndurance = end;
                     _joueurEnEdition.ScoreGeneral  = gen;
                     _db.UpdateJoueur(_joueurEnEdition);
+                    // Les buts sont mis à jour séparément car ils ont leur propre colonne BDD
                     if (int.TryParse(TbButs.Text, out int buts) && buts >= 0)
                         _db.UpdateButsMarques(_joueurEnEdition.Id, buts);
                 }

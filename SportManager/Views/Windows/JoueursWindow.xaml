@@ -3,6 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="{StaticResource BackgroundBrush}">
 
+    <!--
+        Layout 3 lignes × 2 colonnes :
+        Col 0 (*) = contenu principal  |  Col 1 (Auto) = panneau formulaire rétractable
+        Row 0 (64px) = header          |  Row 1 (*) = DataGrid
+        Row 2 (60px) = footer boutons
+    -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -14,7 +20,7 @@
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
-        <!-- ── HEADER ── -->
+        <!-- ── HEADER : titre + barre de recherche (DockPanel aligne la SearchBox à droite) ── -->
         <Border Grid.Row="0" Grid.Column="0"
                 Background="#0E0826"
                 BorderBrush="{StaticResource SeparatorBrush}" BorderThickness="0,0,0,1">
@@ -22,6 +28,7 @@
                 <TextBlock Text="Gestion des Joueurs"
                            FontSize="20" FontWeight="Bold" Foreground="White"
                            VerticalAlignment="Center"/>
+                <!-- SearchBox : filtre le DataGrid en temps réel via SearchBox_TextChanged -->
                 <TextBox x:Name="SearchBox" Width="220"
                          Style="{StaticResource ModernTextBox}"
                          DockPanel.Dock="Right" VerticalAlignment="Center"
@@ -29,7 +36,7 @@
             </DockPanel>
         </Border>
 
-        <!-- ── DATAGRID ── -->
+        <!-- ── DATAGRID : liste de tous les joueurs (source = JoueursWindow._all ou sous-liste filtrée) ── -->
         <DataGrid Grid.Row="1" Grid.Column="0" x:Name="Grid" Margin="16"
                   SelectionChanged="Grid_SelectionChanged">
             <DataGrid.Columns>
@@ -65,7 +72,8 @@
             </StackPanel>
         </Border>
 
-        <!-- ── PANNEAU FORM (droite, collapse/expand) ── -->
+        <!-- ── PANNEAU FORM (Col 1, s'étend sur les 3 lignes, masqué par défaut) ──
+             Visibility géré en code-behind : Visible = création/modification, Collapsed = repos -->
         <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="3"
                 x:Name="FormPanel" Width="300" Visibility="Collapsed"
                 Background="#1C1248"
@@ -73,6 +81,7 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="24">
 
+                    <!-- Titre du formulaire : "NOUVEAU JOUEUR" ou "MODIFIER LE JOUEUR" selon le mode -->
                     <TextBlock x:Name="TbFormTitle" Text="NOUVEAU JOUEUR"
                                FontSize="14" FontWeight="Black" Foreground="White"
                                Margin="0,0,0,6"/>
@@ -82,6 +91,7 @@
                     <TextBox x:Name="TbNom" Style="{StaticResource ModernTextBox}" Margin="0,0,0,16"/>
 
                     <TextBlock Text="POSTE" Style="{StaticResource FormLabel}"/>
+                    <!-- Changement de poste → recalcule le badge d'exigences via CbPoste_Changed -->
                     <ComboBox x:Name="CbPoste" Style="{StaticResource ModernComboBox}" Margin="0,0,0,6"
                               SelectionChanged="CbPoste_Changed">
                         <ComboBoxItem Content="Poursuiveur"/>
@@ -89,6 +99,7 @@
                         <ComboBoxItem Content="Gardien"/>
                         <ComboBoxItem Content="Attrapeur"/>
                     </ComboBox>
+                    <!-- Badge d'exigences : texte vert si stats OK, rouge sinon (coloré en code-behind) -->
                     <Border Background="#150D35" CornerRadius="4" Padding="10,7" Margin="0,0,0,16">
                         <StackPanel>
                             <TextBlock Text="EXIGENCES DU POSTE"
@@ -146,6 +157,7 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- Section buts : visible uniquement en mode modification (masquée à la création) -->
                     <StackPanel x:Name="PanelButs" Visibility="Collapsed" Margin="0,0,0,24">
                         <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,0,0,12"/>
                         <TextBlock Text="BUTS MARQUES" Style="{StaticResource FormLabel}"/>

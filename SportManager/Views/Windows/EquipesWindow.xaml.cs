@@ -44,6 +44,7 @@ namespace SportManager.Views.Windows
 
         /// <summary>
         /// Met à jour les boutons et affiche la composition de l'équipe sélectionnée dans GridCompo.
+        /// Si le panneau de modification est déjà ouvert, rafraîchit automatiquement son contenu.
         /// </summary>
         private void GridEquipes_SelectionChanged(object s, SelectionChangedEventArgs e)
         {
@@ -52,6 +53,10 @@ namespace SportManager.Views.Windows
             BtnSupprimer.IsEnabled = has;
             // Affiche les joueurs de l'équipe sélectionnée dans le panneau inférieur
             GridCompo.ItemsSource  = has ? Selected!.Joueurs : null;
+
+            // Si le panneau droit est ouvert en mode modification, on le met à jour avec la nouvelle équipe sélectionnée
+            if (!_modeCreation && FormPanel.Visibility == Visibility.Visible && Selected != null)
+                ShowFormEdit(Selected);
         }
 
         // ── Panneau form (droite) ──────────────────────────────
@@ -146,10 +151,21 @@ namespace SportManager.Views.Windows
 
         // ── Boutons footer ────────────────────────────────────
 
-        private void Ajouter_Click(object s, RoutedEventArgs e)  => ShowFormCreate();
+        private void Ajouter_Click(object s, RoutedEventArgs e)
+        {
+            // Si le panneau est déjà ouvert en mode création → on le ferme (toggle)
+            if (_modeCreation && FormPanel.Visibility == Visibility.Visible)
+            { HideForm(); return; }
+            ShowFormCreate();
+        }
+
         private void Modifier_Click(object s, RoutedEventArgs e)
         {
-            if (Selected != null) ShowFormEdit(Selected);
+            if (Selected == null) return;
+            // Si le panneau est déjà ouvert sur cette même équipe en mode modification → on le ferme (toggle)
+            if (!_modeCreation && FormPanel.Visibility == Visibility.Visible && _equipeEnEdition?.Id == Selected.Id)
+            { HideForm(); return; }
+            ShowFormEdit(Selected);
         }
 
         private void Supprimer_Click(object s, RoutedEventArgs e)

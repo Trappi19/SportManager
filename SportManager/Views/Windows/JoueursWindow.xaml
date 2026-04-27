@@ -81,10 +81,18 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="24">
 
-                    <!-- Titre du formulaire : "NOUVEAU JOUEUR" ou "MODIFIER LE JOUEUR" selon le mode -->
-                    <TextBlock x:Name="TbFormTitle" Text="NOUVEAU JOUEUR"
-                               FontSize="14" FontWeight="Black" Foreground="White"
-                               Margin="0,0,0,6"/>
+                    <!-- Titre + bouton de fermeture (×) sur la même ligne -->
+                    <DockPanel Margin="0,0,0,6">
+                        <Button DockPanel.Dock="Right" Content="×"
+                                FontSize="16" FontWeight="Bold"
+                                Background="Transparent" BorderThickness="0"
+                                Foreground="#7060A8" Cursor="Hand"
+                                Padding="4,0"
+                                Click="AnnulerForm_Click"/>
+                        <TextBlock x:Name="TbFormTitle" Text="NOUVEAU JOUEUR"
+                                   FontSize="14" FontWeight="Black" Foreground="White"
+                                   VerticalAlignment="Center"/>
+                    </DockPanel>
                     <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,0,0,20"/>
 
                     <TextBlock Text="NOM DU JOUEUR" Style="{StaticResource FormLabel}"/>

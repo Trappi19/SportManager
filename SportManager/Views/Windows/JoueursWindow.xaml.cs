@@ -54,12 +54,19 @@ namespace SportManager.Views.Windows
         // Raccourci pour obtenir le joueur sélectionné dans le DataGrid
         private Joueur? Selected => Grid.SelectedItem as Joueur;
 
-        /// <summary>Active/désactive les boutons Modifier et Supprimer selon la sélection.</summary>
+        /// <summary>
+        /// Active/désactive les boutons Modifier et Supprimer selon la sélection.
+        /// Si le panneau de modification est déjà ouvert, rafraîchit automatiquement son contenu.
+        /// </summary>
         private void Grid_SelectionChanged(object s, SelectionChangedEventArgs e)
         {
             bool has = Selected != null;
             BtnModifier.IsEnabled  = has;
             BtnSupprimer.IsEnabled = has;
+
+            // Si le panneau droit est ouvert en mode modification, on le met à jour avec le nouveau joueur sélectionné
+            if (!_modeCreation && FormPanel.Visibility == Visibility.Visible && Selected != null)
+                ShowFormEdit(Selected);
         }
 
         // Déclenche un re-filtre à chaque frappe dans la barre de recherche
@@ -156,10 +163,21 @@ namespace SportManager.Views.Windows
 
         // ── Boutons footer ────────────────────────────────────
 
-        private void Ajouter_Click(object s, RoutedEventArgs e)   => ShowFormCreate();
+        private void Ajouter_Click(object s, RoutedEventArgs e)
+        {
+            // Si le panneau est déjà ouvert en mode création → on le ferme (toggle)
+            if (_modeCreation && FormPanel.Visibility == Visibility.Visible)
+            { HideForm(); return; }
+            ShowFormCreate();
+        }
+
         private void Modifier_Click(object s, RoutedEventArgs e)
         {
-            if (Selected != null) ShowFormEdit(Selected);
+            if (Selected == null) return;
+            // Si le panneau est déjà ouvert sur ce même joueur en mode modification → on le ferme (toggle)
+            if (!_modeCreation && FormPanel.Visibility == Visibility.Visible && _joueurEnEdition?.Id == Selected.Id)
+            { HideForm(); return; }
+            ShowFormEdit(Selected);
         }
 
         private void Supprimer_Click(object s, RoutedEventArgs e)

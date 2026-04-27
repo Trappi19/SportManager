@@ -27,7 +27,7 @@ namespace SportManager
         /// <summary>Charge l'image de fond du panneau droit depuis le disque.</summary>
         private void LoadBackground()
         {
-            const string path = @"C:\Mes données personnelles\Mes documents persos\CESI\SportManager\SportManager\Resources\background.png";
+            const string path = @"C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\SportManager\Resources\background.png";
             var bi = new System.Windows.Media.Imaging.BitmapImage(new Uri(path));
             ImgFond.Source = bi;
         }

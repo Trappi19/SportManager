@@ -163,7 +163,7 @@ namespace SportManager.Views.Windows {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/SportManager;V1.0.0.0;component/sportmanager/views/windows/equipeswindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SportManager;component/sportmanager/views/windows/equipeswindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\..\SportManager\Views\Windows\EquipesWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

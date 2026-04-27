@@ -5,3 +5,6 @@
 /obj/Debug
 /obj
 *.cache
+/obj
+/bin/Debug/net10.0-windows
+/obj/Debug

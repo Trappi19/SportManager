@@ -1,5 +1,5 @@
 ﻿SportManager
-
+1.0.0.0
 
 winexe
 C#
@@ -12,9 +12,9 @@ TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_O
 C:\Users\sevan\Documents\Mes Documents\Cesi\CSharp\SportManager\SportManager\App.xaml
 8-1793483933
 
-18660798263
+20268451766
 214-446226105
 SportManager\MainWindow.xaml;SportManager\Views\Dialogs\CreatePlayerDialog.xaml;SportManager\Views\Dialogs\CreateTeamDialog.xaml;SportManager\Views\Dialogs\EditPlayerDialog.xaml;SportManager\Views\Dialogs\EditTeamDialog.xaml;SportManager\Views\Windows\EquipesWindow.xaml;SportManager\Views\Windows\JoueursWindow.xaml;SportManager\Views\Windows\MatchWindow.xaml;
 
-False
+True
 

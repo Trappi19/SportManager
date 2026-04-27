@@ -2,3 +2,6 @@
 /obj/Debug
 /obj
 /bin
+/obj/Debug
+/obj
+*.cache

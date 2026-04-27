@@ -149,6 +149,14 @@ namespace SportManager.Views.Windows
             _equipeEnEdition = null;
         }
 
+        // ── Double-clic DataGrid ──────────────────────────────
+
+        /// <summary>Double-clic sur une ligne → ouvre directement le formulaire de modification.</summary>
+        private void GridEquipes_MouseDoubleClick(object s, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (Selected != null) ShowFormEdit(Selected);
+        }
+
         // ── Boutons footer ────────────────────────────────────
 
         private void Ajouter_Click(object s, RoutedEventArgs e)

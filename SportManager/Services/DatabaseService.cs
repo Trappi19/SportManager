@@ -347,13 +347,88 @@ namespace SportManager.Services
                 ORDER BY m.date_match DESC;").ToList();
         }
 
-        public void SaveMatch(int idEq1, int idEq2, int s1, int s2)
+        /// <summary>Insère le match et retourne son id généré (LAST_INSERT_ID).</summary>
+        public int SaveMatch(int idEq1, int idEq2, int s1, int s2)
         {
             using var conn = Open();
             conn.Execute(@"
                 INSERT INTO matchs (score_equipe1, score_equipe2, id_equipe1, id_equipe2, date_match)
                 VALUES (@s1, @s2, @idEq1, @idEq2, NOW());",
                 new { s1, s2, idEq1, idEq2 });
+            return conn.ExecuteScalar<int>("SELECT LAST_INSERT_ID();");
+        }
+
+        /// <summary>
+        /// Persiste les buts dans buts_match en les liant à l'id du match.
+        /// id_equipe est stocké directement pour éviter une jointure complexe au moment de la lecture.
+        /// </summary>
+        public void SaveButsMatch(int idMatch, List<ButInfo> buts)
+        {
+            if (buts.Count == 0) return;
+            using var conn = Open();
+            foreach (var b in buts)
+                conn.Execute(@"
+                    INSERT INTO buts_match (id_match, id_joueur, id_equipe, num_mi_temps)
+                    VALUES (@idMatch, @IdJoueur, @IdEquipe, @NumMiTemps);",
+                    new { idMatch, b.IdJoueur, b.IdEquipe, b.NumMiTemps });
+        }
+
+        /// <summary>Persiste les blessures survenues dans blessures_match en les liant à l'id du match.</summary>
+        public void SaveBlessuresMatch(int idMatch, List<(int idJoueur, int idBlessure)> blessures)
+        {
+            if (blessures.Count == 0) return;
+            using var conn = Open();
+            foreach (var (idJoueur, idBlessure) in blessures)
+                conn.Execute(@"
+                    INSERT INTO blessures_match (id_match, id_joueur, id_blessure)
+                    VALUES (@idMatch, @idJoueur, @idBlessure);",
+                    new { idMatch, idJoueur, idBlessure });
+        }
+
+        /// <summary>
+        /// Charge le détail complet d'un match (buteurs + blessures) depuis les tables de détail.
+        /// Retourne un MatchDetail avec AucunDetail=true si le match est antérieur à la fonctionnalité.
+        /// </summary>
+        public MatchDetail GetDetailMatch(int idMatch)
+        {
+            using var conn = Open();
+
+            // id_equipe est stocké directement dans buts_match → jointure simple
+            var buts = conn.Query<ButDetail>(@"
+                SELECT j.nom_joueur    AS NomJoueur,
+                       e.nom_equipe    AS NomEquipe,
+                       bm.num_mi_temps AS NumMiTemps
+                FROM buts_match bm
+                JOIN joueurs j ON bm.id_joueur = j.id_joueur
+                JOIN equipes e ON bm.id_equipe = e.id_equipe
+                WHERE bm.id_match = @idMatch
+                ORDER BY bm.num_mi_temps, e.nom_equipe, j.nom_joueur;",
+                new { idMatch }).ToList();
+
+            // Pour les blessures on retrouve l'équipe via la table matchs (equipe1 ou equipe2)
+            var blessures = conn.Query<BlessureDetail>(@"
+                SELECT j.nom_joueur    AS NomJoueur,
+                       e.nom_equipe    AS NomEquipe,
+                       b.type_blessure AS TypeBlessure,
+                       b.pénalité      AS Penalite
+                FROM blessures_match bm
+                JOIN joueurs   j ON bm.id_joueur   = j.id_joueur
+                JOIN blessures b ON bm.id_blessure = b.id_blessure
+                JOIN matchs    m ON bm.id_match    = m.id_match
+                JOIN equipes   e ON e.id_equipe    = IF(
+                    bm.id_joueur IN (SELECT id_joueur1 FROM equipes WHERE id_equipe = m.id_equipe1
+                                     UNION SELECT id_joueur2 FROM equipes WHERE id_equipe = m.id_equipe1
+                                     UNION SELECT id_joueur3 FROM equipes WHERE id_equipe = m.id_equipe1
+                                     UNION SELECT id_joueur4 FROM equipes WHERE id_equipe = m.id_equipe1
+                                     UNION SELECT id_joueur5 FROM equipes WHERE id_equipe = m.id_equipe1
+                                     UNION SELECT id_joueur6 FROM equipes WHERE id_equipe = m.id_equipe1
+                                     UNION SELECT id_joueur7 FROM equipes WHERE id_equipe = m.id_equipe1),
+                    m.id_equipe1, m.id_equipe2)
+                WHERE bm.id_match = @idMatch
+                ORDER BY e.nom_equipe, j.nom_joueur;",
+                new { idMatch }).ToList();
+
+            return new MatchDetail { Buts = buts, Blessures = blessures };
         }
 
         // ─────────────────────────── SIMULATION ─────────────────────────
@@ -447,15 +522,16 @@ namespace SportManager.Services
         /// 1. Décrémente le compteur de matchs restants des joueurs déjà blessés.
         /// 2. Guérit les joueurs dont le compteur atteint 0.
         /// 3. Inflige aléatoirement une nouvelle blessure (10% de chance par joueur).
-        /// Retourne les notifications de nouvelles blessures à afficher à l'utilisateur.
+        /// Retourne les notifications texte ET les tuples (idJoueur, idBlessure) pour la persistance en BDD.
         /// </summary>
-        public List<string> GererBlessures(int[] ids)
+        public (List<string> Notifs, List<(int idJoueur, int idBlessure)> Nouvelles) GererBlessures(int[] ids)
         {
             var notifs    = new List<string>();
+            var nouvelles = new List<(int, int)>();
             var blessures = GetAllBlessures();
             var rnd       = new Random();
             var validIds  = ids.Where(id => id != 0).ToList();
-            if (validIds.Count == 0) return notifs;
+            if (validIds.Count == 0) return (notifs, nouvelles);
 
             using var conn = Open();
             // Récupère l'état de blessure actuel de tous les joueurs de l'équipe en une seule requête
@@ -475,10 +551,8 @@ namespace SportManager.Services
                 {
                     restant--;
                     if (restant <= 0)
-                        // Guérison : efface la blessure
                         conn.Execute("UPDATE joueurs SET id_blessure=NULL, matchs_restants_blessure=0 WHERE id_joueur=@idJoueur;", new { idJoueur });
                     else
-                        // Toujours blessé : met à jour le compteur restant
                         conn.Execute("UPDATE joueurs SET matchs_restants_blessure=@restant WHERE id_joueur=@idJoueur;", new { restant, idJoueur });
                 }
 
@@ -486,13 +560,14 @@ namespace SportManager.Services
                 if (blessures.Count > 0 && rnd.Next(100) < 10)
                 {
                     var b = blessures[rnd.Next(blessures.Count)];
-                    // Durée fixe de 3 matchs pour toute nouvelle blessure
                     conn.Execute("UPDATE joueurs SET id_blessure=@bId, matchs_restants_blessure=3 WHERE id_joueur=@idJoueur;",
                         new { bId = b.Id, idJoueur });
                     notifs.Add($"{GetNomJoueur(idJoueur)} → blessure : {b.Type}");
+                    // On retourne le tuple pour pouvoir l'insérer dans blessures_match
+                    nouvelles.Add((idJoueur, b.Id));
                 }
             }
-            return notifs;
+            return (notifs, nouvelles);
         }
 
         // ─────────────────────────── PRIVÉ ──────────────────────────────

@@ -21,8 +21,10 @@ namespace SportManager.Views.Windows
         private int  _scoreFinal1, _scoreFinal2;         // scores calculés après simulation
         private bool _matchSimule;                       // true = simulation effectuée, en attente de sauvegarde
         private bool _modeManuel;                        // true = saisie manuelle du score
-        private List<ButInfo>    _buts        = new();  // liste des buts pour la simulation
-        private List<EvalJoueur> _evalJoueurs = new();  // joueurs à évaluer après le match
+        private List<ButInfo>    _buts            = new();  // liste des buts pour la simulation
+        private List<EvalJoueur> _evalJoueurs      = new();  // joueurs à évaluer après le match
+        // Blessures survenues lors de la simulation — stockées pour la persistance dans Sauver_Click
+        private List<(int idJoueur, int idBlessure)> _blessuresMatch = new();
 
         public MatchWindow()
         {
@@ -199,9 +201,11 @@ namespace SportManager.Views.Windows
             AttribuerButs(_buts, s1MT2, eq1.Id, _db.GetPoursuiveurs(eq1.JoueurIds), 2);
             AttribuerButs(_buts, s2MT2, eq2.Id, _db.GetPoursuiveurs(eq2.JoueurIds), 2);
 
-            // Gestion des blessures : décrémente les compteurs et inflige éventuellement de nouvelles blessures
-            var notifsBlessures = _db.GererBlessures(eq1.JoueurIds);
-            notifsBlessures.AddRange(_db.GererBlessures(eq2.JoueurIds));
+            // Gestion des blessures — tuples stockés dans _blessuresMatch pour la persistance dans Sauver_Click
+            var (notifs1, nouvelles1) = _db.GererBlessures(eq1.JoueurIds);
+            var (notifs2, nouvelles2) = _db.GererBlessures(eq2.JoueurIds);
+            _blessuresMatch = nouvelles1.Concat(nouvelles2).ToList();
+            var notifsBlessures = notifs1.Concat(notifs2).ToList();
 
             TbScoreFinal.Text = $"{_scoreFinal1}  —  {_scoreFinal2}";
             TbMT1.Text = $"1ère MT : {s1MT1} - {s2MT1}";
@@ -293,9 +297,14 @@ namespace SportManager.Views.Windows
             if (!_matchSimule) return;
             try
             {
-                _db.SaveMatch(_idEq1, _idEq2, _scoreFinal1, _scoreFinal2);
+                // SaveMatch retourne l'id généré pour lier les détails
+                int idMatch = _db.SaveMatch(_idEq1, _idEq2, _scoreFinal1, _scoreFinal2);
                 _db.EnregistrerButs(_buts);
-                _matchSimule    = false;
+                _db.SaveButsMatch(idMatch, _buts);
+                // _blessuresMatch a été rempli dans SimulerInternal, on ne rappelle pas GererBlessures
+                _db.SaveBlessuresMatch(idMatch, _blessuresMatch);
+
+                _matchSimule        = false;
                 BtnSauver.IsEnabled = false;
                 PrepareEvaluation();
                 MessageBox.Show("Match enregistré. Évaluez maintenant les joueurs.", "Succès",
@@ -329,13 +338,15 @@ namespace SportManager.Views.Windows
                 _idEq1 = eq1.Id; _idEq2 = eq2.Id;
                 _scoreFinal1 = s1; _scoreFinal2 = s2;
 
-                _db.SaveMatch(_idEq1, _idEq2, _scoreFinal1, _scoreFinal2);
+                int idMatch = _db.SaveMatch(_idEq1, _idEq2, _scoreFinal1, _scoreFinal2);
 
-                var notifs = _db.GererBlessures(eq1.JoueurIds);
-                notifs.AddRange(_db.GererBlessures(eq2.JoueurIds));
+                var (notifs1, nouvelles1) = _db.GererBlessures(eq1.JoueurIds);
+                var (notifs2, nouvelles2) = _db.GererBlessures(eq2.JoueurIds);
+                _db.SaveBlessuresMatch(idMatch, nouvelles1.Concat(nouvelles2).ToList());
 
-                string notifTxt = notifs.Count > 0
-                    ? "\n\nBlessures : " + string.Join(", ", notifs)
+                var toutesNotifs = notifs1.Concat(notifs2).ToList();
+                string notifTxt = toutesNotifs.Count > 0
+                    ? "\n\nBlessures : " + string.Join(", ", toutesNotifs)
                     : "";
 
                 PanelSaisieManuelle.Visibility = Visibility.Collapsed;
@@ -407,20 +418,128 @@ namespace SportManager.Views.Windows
 
         // ─────────────────── HISTORIQUE ────────────────────────
 
-        private void HistoriqueTab_GotFocus(object s, RoutedEventArgs e)
+        /// <summary>
+        /// Déclenché une seule fois quand l'utilisateur change d'onglet (pas à chaque clic dans le contenu).
+        /// Charge les matchs uniquement quand on arrive sur l'onglet Historique (index 1).
+        /// </summary>
+        private void TabControl_SelectionChanged(object s, SelectionChangedEventArgs e)
         {
-            try { GridHistorique.ItemsSource = _db.GetAllMatchs(); }
-            catch { }
+            // On vérifie que l'événement vient bien du TabControl et non d'un DataGrid enfant
+            if (e.Source != MainTabControl) return;
+            if (MainTabControl.SelectedIndex == 1)
+            {
+                try
+                {
+                    GridHistorique.ItemsSource = _db.GetAllMatchs();
+                    FermerDetail();
+                }
+                catch { }
+            }
         }
 
         private void ActualiserHisto_Click(object s, RoutedEventArgs e)
         {
-            try { GridHistorique.ItemsSource = _db.GetAllMatchs(); }
+            try
+            {
+                GridHistorique.ItemsSource = _db.GetAllMatchs();
+                FermerDetail();
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"Erreur : {ex.Message}", "Erreur",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        /// <summary>
+        /// Affiche le panneau détail du match sélectionné dans GridHistorique.
+        /// Gère le cas "ancien match" sans données détaillées.
+        /// </summary>
+        private void GridHistorique_SelectionChanged(object s, SelectionChangedEventArgs e)
+        {
+            var match = GridHistorique.SelectedItem as MatchResult;
+            if (match == null) { FermerDetail(); return; }
+
+            try
+            {
+                var detail = _db.GetDetailMatch(match.Id);
+
+                // En-tête
+                TbDetailTitre.Text    = $"{match.NomEquipe1}  vs  {match.NomEquipe2}";
+                TbDetailScore.Text    = match.Resultat;
+                TbDetailVainqueur.Text = match.Vainqueur == "Egalité" ? "Match nul" : $"Vainqueur : {match.Vainqueur}";
+
+                if (detail.AucunDetail)
+                {
+                    // Match antérieur : pas de données dans buts_match / blessures_match
+                    GridDetailButs.Visibility       = Visibility.Collapsed;
+                    TbAucunBut.Visibility           = Visibility.Collapsed;
+                    GridDetailBlessures.Visibility  = Visibility.Collapsed;
+                    LblBlessuresDetail.Visibility   = Visibility.Collapsed;
+                    BorderBlessuresDetail.Visibility = Visibility.Collapsed;
+                    PanelAncienMatch.Visibility     = Visibility.Visible;
+                }
+                else
+                {
+                    PanelAncienMatch.Visibility = Visibility.Collapsed;
+
+                    // Buteurs
+                    if (detail.Buts.Count > 0)
+                    {
+                        GridDetailButs.ItemsSource  = detail.Buts;
+                        GridDetailButs.Visibility   = Visibility.Visible;
+                        TbAucunBut.Visibility       = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        GridDetailButs.Visibility = Visibility.Collapsed;
+                        TbAucunBut.Visibility     = Visibility.Visible;
+                    }
+
+                    // Blessures
+                    if (detail.Blessures.Count > 0)
+                    {
+                        GridDetailBlessures.ItemsSource   = detail.Blessures;
+                        GridDetailBlessures.Visibility    = Visibility.Visible;
+                        LblBlessuresDetail.Visibility     = Visibility.Visible;
+                        BorderBlessuresDetail.Visibility  = Visibility.Visible;
+                    }
+                    else
+                    {
+                        GridDetailBlessures.Visibility   = Visibility.Collapsed;
+                        LblBlessuresDetail.Visibility    = Visibility.Collapsed;
+                        BorderBlessuresDetail.Visibility = Visibility.Collapsed;
+                    }
+                }
+
+                // Ouvre le panneau détail
+                PanelDetail.Visibility = Visibility.Visible;
+                ColDetail.Width        = new GridLength(340);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur chargement détail : {ex.Message}", "Erreur",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void FermerDetail_Click(object s, RoutedEventArgs e) => FermerDetail();
+
+        private void FermerDetail()
+        {
+            PanelDetail.Visibility = Visibility.Collapsed;
+            ColDetail.Width        = new GridLength(0);
+            // On garde la sélection active → double-clic peut rouvrir le détail
+        }
+
+        /// <summary>
+        /// Double-clic sur un match → rouvre le panneau détail s'il a été fermé via la croix.
+        /// Si le panneau est déjà ouvert, aucun effet (SelectionChanged s'en est déjà chargé).
+        /// </summary>
+        private void GridHistorique_MouseDoubleClick(object s, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (GridHistorique.SelectedItem is MatchResult && PanelDetail.Visibility != Visibility.Visible)
+                GridHistorique_SelectionChanged(s, null!);
         }
 
         private void Retour_Click(object s, RoutedEventArgs e) => Retour?.Invoke(this, EventArgs.Empty);

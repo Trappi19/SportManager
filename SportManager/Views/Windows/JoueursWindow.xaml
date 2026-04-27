@@ -37,8 +37,10 @@
         </Border>
 
         <!-- ── DATAGRID : liste de tous les joueurs (source = JoueursWindow._all ou sous-liste filtrée) ── -->
+        <!-- Double-clic sur une ligne → ouvre directement le formulaire de modification -->
         <DataGrid Grid.Row="1" Grid.Column="0" x:Name="Grid" Margin="16"
-                  SelectionChanged="Grid_SelectionChanged">
+                  SelectionChanged="Grid_SelectionChanged"
+                  MouseDoubleClick="Grid_MouseDoubleClick">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID"       Binding="{Binding Id}"              Width="50"/>
                 <DataGridTextColumn Header="Nom"      Binding="{Binding Nom}"             Width="*"/>

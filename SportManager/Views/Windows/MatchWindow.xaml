@@ -30,9 +30,12 @@
         </Border>
 
         <!-- CONTENU -->
-        <TabControl Grid.Row="1" Background="Transparent"
+        <!-- SelectionChanged sur le TabControl : déclenché une seule fois au changement d'onglet,
+             contrairement à GotFocus sur le TabItem qui se déclenche à chaque clic dans le contenu -->
+        <TabControl Grid.Row="1" x:Name="MainTabControl" Background="Transparent"
                     BorderBrush="{StaticResource SeparatorBrush}"
-                    Foreground="{StaticResource TextBrush}">
+                    Foreground="{StaticResource TextBrush}"
+                    SelectionChanged="TabControl_SelectionChanged">
 
             <!-- ══════════════ ONGLET MATCH ══════════════ -->
             <TabItem Header="  Gestion du Match  " Foreground="{StaticResource TextBrush}"
@@ -320,27 +323,126 @@
             </TabItem>
 
             <!-- ══════════════ ONGLET HISTORIQUE ══════════════ -->
+            <!-- Plus de GotFocus ici : le chargement est géré par TabControl_SelectionChanged -->
             <TabItem Header="  Historique  " Foreground="{StaticResource TextBrush}"
-                     Background="{StaticResource CardBrush}"
-                     GotFocus="HistoriqueTab_GotFocus">
-                <Grid Margin="16">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <DataGrid x:Name="GridHistorique" AutoGenerateColumns="False">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Date"      Binding="{Binding DateDisplay}"  Width="140"/>
-                            <DataGridTextColumn Header="Équipe 1"  Binding="{Binding NomEquipe1}"   Width="*"/>
-                            <DataGridTextColumn Header="Score"     Binding="{Binding Resultat}"     Width="80"/>
-                            <DataGridTextColumn Header="Équipe 2"  Binding="{Binding NomEquipe2}"   Width="*"/>
-                            <DataGridTextColumn Header="Vainqueur" Binding="{Binding Vainqueur}"    Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <Button Grid.Row="1" Content="Actualiser"
-                            Style="{StaticResource BtnSecondary}"
-                            HorizontalAlignment="Right" Margin="0,10,0,0"
-                            Click="ActualiserHisto_Click"/>
+                     Background="{StaticResource CardBrush}">
+                <!--
+                    Layout 2 colonnes :
+                    Col 0 (*) = liste des matchs  |  Col 1 (0 ou 340px) = panneau détail
+                -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <!-- Panneau détail : largeur 0 quand collapsed, 340 quand visible -->
+                        <ColumnDefinition x:Name="ColDetail" Width="0"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- ── Liste des matchs ── -->
+                    <Grid Grid.Column="0" Margin="16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <!-- Double-clic → ouvre le panneau détail (même effet que clic simple, mais plus intuitif) -->
+                        <DataGrid x:Name="GridHistorique" AutoGenerateColumns="False"
+                                  SelectionChanged="GridHistorique_SelectionChanged"
+                                  MouseDoubleClick="GridHistorique_MouseDoubleClick">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Date"      Binding="{Binding DateDisplay}"  Width="140"/>
+                                <DataGridTextColumn Header="Équipe 1"  Binding="{Binding NomEquipe1}"   Width="*"/>
+                                <DataGridTextColumn Header="Score"     Binding="{Binding Resultat}"     Width="80"/>
+                                <DataGridTextColumn Header="Équipe 2"  Binding="{Binding NomEquipe2}"   Width="*"/>
+                                <DataGridTextColumn Header="Vainqueur" Binding="{Binding Vainqueur}"    Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Button Grid.Row="1" Content="Actualiser"
+                                Style="{StaticResource BtnSecondary}"
+                                HorizontalAlignment="Right" Margin="0,10,0,0"
+                                Click="ActualiserHisto_Click"/>
+                    </Grid>
+
+                    <!-- ── Panneau détail du match sélectionné (Col 1, largeur fixée par ColDetail) ── -->
+                    <Border Grid.Column="1" x:Name="PanelDetail"
+                            Background="#1C1248" MinWidth="340"
+                            BorderBrush="{StaticResource SeparatorBrush}" BorderThickness="1,0,0,0"
+                            Visibility="Collapsed">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="20">
+
+                                <!-- En-tête détail + croix fermeture -->
+                                <DockPanel Margin="0,0,0,6">
+                                    <Button DockPanel.Dock="Right" Content="×"
+                                            FontSize="16" FontWeight="Bold"
+                                            Background="Transparent" BorderThickness="0"
+                                            Foreground="#7060A8" Cursor="Hand" Padding="4,0"
+                                            Click="FermerDetail_Click"/>
+                                    <TextBlock x:Name="TbDetailTitre"
+                                               FontSize="14" FontWeight="Black" Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                </DockPanel>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,0,0,16"/>
+
+                                <!-- Score + vainqueur -->
+                                <TextBlock x:Name="TbDetailScore"
+                                           FontSize="36" FontWeight="Black" Foreground="White"
+                                           HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                                <TextBlock x:Name="TbDetailVainqueur"
+                                           FontSize="13" Foreground="{StaticResource AccentBrush}"
+                                           FontWeight="Bold" HorizontalAlignment="Center"
+                                           Margin="0,0,0,20"/>
+
+                                <!-- Section buteurs -->
+                                <TextBlock Text="BUTEURS" Style="{StaticResource FormLabel}" Margin="0,0,0,8"/>
+                                <!-- DataGrid buts groupé par mi-temps -->
+                                <DataGrid x:Name="GridDetailButs" AutoGenerateColumns="False"
+                                          CanUserAddRows="False" IsReadOnly="True"
+                                          Background="Transparent" RowBackground="Transparent"
+                                          AlternatingRowBackground="#150D35"
+                                          MaxHeight="220" Margin="0,0,0,4">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Joueur" Binding="{Binding NomJoueur}" Width="*"/>
+                                        <DataGridTextColumn Header="Équipe" Binding="{Binding NomEquipe}" Width="*"/>
+                                        <DataGridTextColumn Header="MT"     Binding="{Binding MiTempsDisplay}" Width="70"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <TextBlock x:Name="TbAucunBut" Text="Aucun buteur enregistré."
+                                           Foreground="{StaticResource MutedBrush}" FontSize="12"
+                                           Margin="0,4,0,0" Visibility="Collapsed"/>
+
+                                <!-- Section blessures -->
+                                <Border x:Name="BorderBlessuresDetail"
+                                        Height="1" Background="{StaticResource SeparatorBrush}"
+                                        Margin="0,16,0,12" Visibility="Collapsed"/>
+                                <TextBlock x:Name="LblBlessuresDetail" Text="BLESSURES"
+                                           Style="{StaticResource FormLabel}" Margin="0,0,0,8"
+                                           Visibility="Collapsed"/>
+                                <DataGrid x:Name="GridDetailBlessures" AutoGenerateColumns="False"
+                                          CanUserAddRows="False" IsReadOnly="True"
+                                          Background="Transparent" RowBackground="Transparent"
+                                          AlternatingRowBackground="#150D35"
+                                          MaxHeight="180" Visibility="Collapsed">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Joueur"   Binding="{Binding NomJoueur}"    Width="*"/>
+                                        <DataGridTextColumn Header="Équipe"   Binding="{Binding NomEquipe}"    Width="*"/>
+                                        <DataGridTextColumn Header="Blessure" Binding="{Binding TypeBlessure}" Width="*"/>
+                                        <DataGridTextColumn Header="Malus"    Binding="{Binding Penalite}"     Width="55"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <!-- Message ancien match sans détail -->
+                                <Border x:Name="PanelAncienMatch"
+                                        Background="#1A1040" CornerRadius="6"
+                                        Padding="14,12" Margin="0,16,0,0"
+                                        Visibility="Collapsed">
+                                    <TextBlock Text="Détail non disponible — ce match a été joué avant l'activation de l'historique détaillé."
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12" TextWrapping="Wrap"/>
+                                </Border>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+
                 </Grid>
             </TabItem>
         </TabControl>

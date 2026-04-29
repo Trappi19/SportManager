@@ -45,7 +45,7 @@ namespace SportManager {
         /// InitializeComponent
         /// </summary>
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "10.0.6.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "10.0.7.0")]
         public void InitializeComponent() {
             if (_contentLoaded) {
                 return;
@@ -57,7 +57,7 @@ namespace SportManager {
             
             #line default
             #line hidden
-            System.Uri resourceLocater = new System.Uri("/SportManager;component/sportmanager/app.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SportManager;V1.0.0.0;component/sportmanager/app.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\SportManager\App.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
@@ -71,7 +71,7 @@ namespace SportManager {
         /// </summary>
         [System.STAThreadAttribute()]
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "10.0.6.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "10.0.7.0")]
         public static void Main() {
             SportManager.App app = new SportManager.App();
             app.InitializeComponent();

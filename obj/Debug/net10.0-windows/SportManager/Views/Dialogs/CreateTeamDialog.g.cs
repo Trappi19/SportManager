@@ -117,13 +117,13 @@ namespace SportManager.Views.Dialogs {
         /// InitializeComponent
         /// </summary>
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "10.0.6.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "10.0.7.0")]
         public void InitializeComponent() {
             if (_contentLoaded) {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/SportManager;component/sportmanager/views/dialogs/createteamdialog.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/SportManager;V1.0.0.0;component/sportmanager/views/dialogs/createteamdialog.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\..\SportManager\Views\Dialogs\CreateTeamDialog.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
@@ -133,7 +133,7 @@ namespace SportManager.Views.Dialogs {
         }
         
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "10.0.6.0")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "10.0.7.0")]
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]

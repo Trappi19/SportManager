@@ -9,8 +9,6 @@ namespace SportManager.Services
     ///
     /// Pourquoi Dapper ici ?
     /// Dapper est le micro-ORM du projet. Il ne génère pas le SQL lui-même
-    /// (contrairement à Entity Framework), mais il exécute le SQL qu'on lui
-    /// fournit et mappe les résultats vers des objets C#.
     /// Ici on l'utilise pour exécuter les CREATE TABLE et les INSERT de données
     /// de référence — exactement comme il exécute les requêtes métier dans DatabaseService.
     ///
